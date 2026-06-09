@@ -70,8 +70,8 @@ Match scores are reported in a single `score_display` column:
 | Knockout decided on penalties           | e.g. `"1–1 (4–3 PK)"`      |
 | Postponed / cancelled / suspended       | `"postponed"`, etc.        |
 
-The free football-data.org tier doesn’t expose live in-match scores, so
-during a match you’ll see `"in progress"`. Use a faster source if you
+The free football-data.org tier doesn’t expose up-to-the-minute scores, so
+during a match you may see `"in progress"`. Use a faster source if you
 need a live scoreline.
 
 ## Caching

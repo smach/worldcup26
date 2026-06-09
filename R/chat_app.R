@@ -75,7 +75,7 @@ chat_default_greeting <- function() {
     "- *Has Brazil played yet?*",
     "",
     "Data comes from [football-data.org](https://www.football-data.org/).",
-    "During an in-progress match the score column reads *\"in progress\"*",
+    "During an in-progress match the score column may read *\"in progress\"*",
     "because the dashboard uses the free API tier \u2014 check back after the",
     "final whistle.",
     sep = "\n"

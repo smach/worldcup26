@@ -28,14 +28,13 @@ ojs_define(
 ```
 
 ::: {.callout-warning appearance="simple"}
-**Not a live score source.** This page is rebuilt from the **free** tier
-of the [football-data.org](https://www.football-data.org/) API hourly
-during match windows. The free tier does **not** provide live in-match scores — during
-a match the score column will read *"in progress"*, and for a brief
-window after a match ends it may read *"no score available yet."* If you
-want live results, you'll need to get your own
-[paid football-data.org API key](https://www.football-data.org/pricing)
-and run the page yourself.
+This data is updated hourly from
+[football-data.org](https://www.football-data.org/)'s free-tier API when
+matches are played. The free tier provides delayed scores, not live
+in-match scores. During a match, this page may show the match as
+*"in progress"* without a current score; shortly after full time, it may
+temporarily show *"no score available yet"* until the delayed score data
+is available.
 
 *Last rebuilt: `r format(Sys.time(), "%B %e, %Y at %H:%M UTC", tz = "UTC")`*
 :::
