@@ -11,3 +11,5 @@
   `worldcup26_chat()`, powered by querychat and ellmer.
 * Companion Quarto + Observable JS site for browsing the schedule by team
   or by date.
+
+  _[This update was written by Claude]_
