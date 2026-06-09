@@ -33,9 +33,14 @@ jobs:
       - name: Install package dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          # Only hard deps (Imports) plus what Quarto needs to render index.qmd.
+          # The default ("all") also installs Suggests (shiny, ellmer, querychat,
+          # bslib, testthat, ...), which the static site never uses. Caching is on
+          # by default; trimming the set speeds up both cold installs and restores.
+          dependencies: '"hard"'
           extra-packages: |
-            any::dplyr
             any::rmarkdown
+            any::knitr
             local::.
 
       - name: Render site
