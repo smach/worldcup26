@@ -1,0 +1,40 @@
+Package: worldcup26
+Title: Access FIFA 2026 World Cup Schedule and Results
+Version: 0.1.0
+Authors@R:
+    person("Sharon", "Machlis", , "smachlis@gmail.com", role = c("aut", "cre"))
+Description: An R wrapper for the football-data.org v4 API that retrieves
+    team schedules and results for the 2026 FIFA World Cup. Provides
+    helpers to list participating teams and to look up a team's full
+    schedule, next match, or past results.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Language: en-US
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends:
+    R (>= 4.1)
+Imports:
+    cachem,
+    cli,
+    dplyr (>= 1.2.0),
+    httr2,
+    memoise,
+    purrr,
+    rlang,
+    stringi,
+    tibble
+Suggests:
+    bslib,
+    ellmer,
+    jsonlite,
+    knitr,
+    querychat,
+    rmarkdown,
+    shiny,
+    testthat (>= 3.0.0),
+    withr
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+URL: https://github.com/smach/worldcup26
+BugReports: https://github.com/smach/worldcup26/issues

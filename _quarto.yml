@@ -1,0 +1,35 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - index.qmd
+  preview:
+    port: 4321
+
+website:
+  title: "FIFA 2026 World Cup"
+  description: "Team schedules and results for the 2026 FIFA Men's World Cup."
+  navbar:
+    background: primary
+    left:
+      - text: "Home"
+        href: index.qmd
+    right:
+      - icon: github
+        href: https://github.com/smach/worldcup26
+        aria-label: GitHub
+
+format:
+  html:
+    theme: cosmo
+    brand: _brand.yml
+    toc: false
+    page-layout: full
+    grid:
+      body-width: 1100px
+    include-in-header:
+      text: |
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+execute:
+  freeze: false

@@ -1,0 +1,14 @@
+^LICENSE\.md$
+^README\.Rmd$
+^\.Rproj\.user$
+^\.github$
+^_quarto\.yml$
+^_brand\.yml$
+^index\.qmd$
+^styles\.css$
+^docs$
+^_site$
+^\.quarto$
+^index_files$
+^index\.knit\.md$
+^index\.utf8\.md$

@@ -1,0 +1,25 @@
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# Renviron with API key — never commit
+.Renviron
+
+# Quarto
+/.quarto/
+*_files/
+*_cache/
+*.knit.md
+*.utf8.md
+
+# Rendered output is published to gh-pages, not main
+/docs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+/.claude/
+

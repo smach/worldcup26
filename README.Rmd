@@ -1,0 +1,144 @@
+---
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# worldcup26
+
+An R wrapper for the [football-data.org v4 API](https://docs.football-data.org/general/v4/resources.html), focused on the 2026 FIFA Men's World Cup. Look up the participating teams, a team's full schedule, its next match, or its past results.
+
+## Installation
+
+```r
+# install.packages("pak")
+pak::pak("smach/worldcup26")
+```
+
+You need a free football-data.org API key. Register at
+<https://www.football-data.org/client/register> and add the key to your `~/.Renviron`:
+
+```
+FOOTBALL_DATA_API_KEY=your-key-here
+```
+
+Restart R so the variable is picked up.
+
+## Usage
+
+```{r, eval = FALSE}
+library(worldcup26)
+
+list_teams()
+team_schedule("USA")
+team_next_match("Brazil")
+team_past_results("Argentina")
+```
+
+Team lookups are flexible. All of these resolve to the same team:
+
+```{r, eval = FALSE}
+team_schedule("United States")
+team_schedule("USA")
+team_schedule("us")
+```
+
+Common aliases also work: `"Korea"` → South Korea, `"Czech Republic"` → Czechia, `"Cape Verde"` → Cape Verde Islands.
+
+## Score display
+
+Match scores are reported in a single `score_display` column:
+
+| Situation                                    | Value                     |
+|----------------------------------------------|---------------------------|
+| Match yet to start                           | `""`                      |
+| Match in progress                            | `"in progress"`           |
+| Recently completed, no score posted yet      | `"no score available yet"`|
+| Completed match with score                   | e.g. `"2–1"`         |
+| Knockout decided on penalties                | e.g. `"1–1 (4–3 PK)"` |
+| Postponed / cancelled / suspended            | `"postponed"`, etc.       |
+
+The free football-data.org tier doesn't expose live in-match scores, so during a match you'll see `"in progress"`. Use a faster source if you need a live scoreline.
+
+## Caching
+
+API responses are cached to disk for one hour by default. Override with:
+
+```r
+options(worldcup26.cache_ttl = 600)  # 10 minutes
+clear_cache()                         # nuke the cache manually
+```
+
+## Functions
+
+* `list_teams()` — every team in the tournament
+* `team_schedule(team)` — full schedule for a team
+* `team_next_match(team)` — earliest upcoming match
+* `team_past_results(team)` — already-played matches
+* `all_matches()` — every World Cup match in one tibble
+* `chat_data()` — the flat matches table used by the chat dashboard
+* `worldcup26_chat()` — launches the natural-language chat dashboard
+* `clear_cache()` — drop cached responses
+
+## Natural-language chat dashboard
+
+The package ships a small Shiny dashboard built on [querychat](https://github.com/posit-dev/querychat) that lets you ask questions in plain English:
+
+```r
+worldcup26::worldcup26_chat()
+```
+
+Sample questions:
+
+- *When is Canada's next game?*
+- *Show me all matches on June 15.*
+- *Which teams are in Group D?*
+- *List the round of 16 matches.*
+- *Has Brazil played yet?*
+
+The dashboard uses Anthropic Claude by default; you'll need an `ANTHROPIC_API_KEY` in your environment (`~/.Renviron` is a good place). Get a key at <https://console.anthropic.com>. To use a different provider or model, pass your own client:
+
+```r
+worldcup26_chat(client = ellmer::chat_openai(model = "gpt-4o"))
+# or change the Claude model:
+worldcup26_chat(model = "claude-opus-4-7")
+```
+
+## Companion Quarto site
+
+This repo also ships a small Quarto + Observable JS site that lets visitors browse the schedule by team or by date. It builds on top of the package — an R chunk in `index.qmd` calls `list_teams()` and `all_matches()` at render time and hands the data to Observable JS via `ojs_define()`. The rendered page is fully static and needs no API key to view.
+
+Site files (all excluded from the package build via `.Rbuildignore`):
+
+* `index.qmd`, `_quarto.yml`, `_brand.yml`, `styles.css` — page source
+* `.github/workflows/publish.yml` — rebuilds the page on every push to `main` and publishes to the `gh-pages` branch. A cron schedule rebuilds hourly during the match window (15:00–06:00 UTC / 11 AM–2 AM ET), skipping the overnight lull when no games are on
+* `.github/workflows/R-CMD-check.yaml` — runs package checks on Ubuntu and Windows for pushes and pull requests
+
+### Local preview
+
+```bash
+quarto preview
+# or render once:
+quarto render
+```
+
+You need the package installed (`R -e 'devtools::install()'` from the repo root) and `FOOTBALL_DATA_API_KEY` in your environment.
+
+### GitHub Pages setup
+
+1. Add a repository secret named `FOOTBALL_DATA_API_KEY` with your football-data.org API key (Settings → Secrets and variables → Actions).
+2. Push to `main` or run the workflow manually from the Actions tab. It renders the site and pushes to `gh-pages`.
+3. In Settings → Pages, choose **Branch: gh-pages** as the source.
+
+The GitHub Actions workflow rebuilds the site hourly during the match window (15:00–06:00 UTC) and skips the quiet hours (07:00–14:00 UTC / 3–10 AM ET). Adjust the cron expression in `.github/workflows/publish.yml` if you want a different cadence. A prominent banner on the page tells visitors that live in-match scores are not available on the free API tier.
+
+## License
+
+MIT.

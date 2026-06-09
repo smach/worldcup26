@@ -1,0 +1,288 @@
+---
+title: "FIFA 2026 World Cup"
+subtitle: "Schedule and results"
+format:
+  html:
+    css: styles.css
+---
+
+```{r setup}
+#| include: false
+library(worldcup26)
+library(dplyr)
+
+teams   <- list_teams()
+matches <- all_matches()
+
+# POSIXct doesn't round-trip cleanly through ojs_define(); ship ISO strings
+# and re-construct Date objects on the JS side.
+matches_for_js <- matches |>
+  mutate(utc_date_str = format(utc_date, "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")) |>
+  select(-utc_date)
+
+ojs_define(
+  teams_data    = teams,
+  matches_data  = matches_for_js,
+  last_updated  = format(Sys.time(), "%Y-%m-%d %H:%M UTC", tz = "UTC")
+)
+```
+
+::: {.callout-warning appearance="simple"}
+**Not a live score source.** This page is rebuilt from the **free** tier
+of the [football-data.org](https://www.football-data.org/) API hourly
+during match windows. The free tier does **not** provide live in-match scores — during
+a match the score column will read *"in progress"*, and for a brief
+window after a match ends it may read *"no score available yet."* If you
+want live results, you'll need to get your own
+[paid football-data.org API key](https://www.football-data.org/pricing)
+and run the page yourself.
+
+*Last rebuilt: `r format(Sys.time(), "%B %e, %Y at %H:%M UTC", tz = "UTC")`*
+:::
+
+```{ojs}
+//| echo: false
+teams   = transpose(teams_data).sort((a, b) => a.name.localeCompare(b.name))
+matches = transpose(matches_data)
+  .map(d => ({...d, utc_date: new Date(d.utc_date_str)}))
+  .sort((a, b) => a.utc_date - b.utc_date)
+now = new Date()
+```
+
+::: {.panel-tabset}
+
+## By team
+
+```{ojs}
+//| echo: false
+viewof selectedTeamName = Inputs.select(
+  teams.map(t => t.name),
+  {label: "Team", value: "Brazil"}
+)
+```
+
+```{ojs}
+//| echo: false
+selectedTeam = teams.find(t => t.name === selectedTeamName)
+teamMatches  = matches.filter(
+  m => m.home_team_id === selectedTeam.id || m.away_team_id === selectedTeam.id
+)
+nextMatch    = teamMatches.find(
+  m => (m.utc_date >= now || liveStatuses.has(m.status)) &&
+       !finishedStatuses.has(m.status) &&
+       !inactiveStatuses.has(m.status)
+)
+pastMatches  = teamMatches.filter(
+  m => m.utc_date < now &&
+       !liveStatuses.has(m.status) &&
+       !inactiveStatuses.has(m.status)
+)
+upcoming     = teamMatches.filter(
+  m => (m.utc_date >= now || liveStatuses.has(m.status)) &&
+       !finishedStatuses.has(m.status) &&
+       !inactiveStatuses.has(m.status)
+)
+```
+
+```{ojs}
+//| echo: false
+html`<div class="team-header">
+  <img src="${selectedTeam.crest_url}" alt="${selectedTeam.name} crest" class="crest-lg">
+  <div>
+    <h2 class="team-name">${selectedTeam.name}</h2>
+    <div class="team-meta">${selectedTeam.tla} · ${groupLabelFor(selectedTeam)}</div>
+  </div>
+</div>`
+```
+
+### Next match
+
+```{ojs}
+//| echo: false
+nextMatchCard(nextMatch, selectedTeam)
+```
+
+### Upcoming matches
+
+```{ojs}
+//| echo: false
+upcoming.length > 0
+  ? scheduleTable(upcoming, selectedTeam)
+  : html`<p class="muted">No remaining matches on the schedule.</p>`
+```
+
+### Past results
+
+```{ojs}
+//| echo: false
+pastMatches.length > 0
+  ? scheduleTable(pastMatches, selectedTeam)
+  : html`<p class="muted">${selectedTeam.name} has not played any matches yet.</p>`
+```
+
+## By date
+
+```{ojs}
+//| echo: false
+matchesByDay = d3.groups(
+  matches,
+  m => m.utc_date.toISOString().slice(0, 10)
+).sort(([a], [b]) => a.localeCompare(b))
+```
+
+```{ojs}
+//| echo: false
+viewof dayChoice = Inputs.select(
+  ["All days", ...matchesByDay.map(([d]) => d)],
+  {label: "Day"}
+)
+```
+
+```{ojs}
+//| echo: false
+dayList = dayChoice === "All days"
+  ? matchesByDay
+  : matchesByDay.filter(([d]) => d === dayChoice)
+```
+
+```{ojs}
+//| echo: false
+html`${dayList.map(([day, dayMatches]) => html`
+  <section class="day-block">
+    <h3 class="day-heading">${formatDayHeading(day)}</h3>
+    ${matchListTable(dayMatches)}
+  </section>
+`)}`
+```
+
+:::
+
+```{ojs}
+//| echo: false
+// ---- helpers ----------------------------------------------------------------
+
+liveStatuses     = new Set(["IN_PLAY","PAUSED","EXTRA_TIME","PENALTY_SHOOTOUT"])
+finishedStatuses = new Set(["FINISHED","AWARDED"])
+inactiveStatuses = new Set(["CANCELLED","POSTPONED","SUSPENDED"])
+
+teamById = new Map(teams.map(t => [t.id, t]))
+
+function crestFor(name, id) {
+  const t = teamById.get(id);
+  return t
+    ? html`<img src="${t.crest_url}" alt="" class="crest-sm"> ${name}`
+    : html`<span class="tbd">${name ?? "TBD"}</span>`;
+}
+
+function groupLabelFor(team) {
+  const m = matches.find(
+    x => (x.home_team_id === team.id || x.away_team_id === team.id) &&
+         x.stage === "GROUP_STAGE"
+  );
+  return m && m.group ? `Group ${m.group.replace("GROUP_", "")}` : "—";
+}
+
+function stageLabel(stage, group) {
+  if (!stage) return "";
+  if (stage === "GROUP_STAGE") return group ? `Group ${group.replace("GROUP_", "")}` : "Group stage";
+  return stage.replace(/_/g, " ").toLowerCase()
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function formatDate(d) {
+  return d.toLocaleString(undefined, {
+    weekday: "long", month: "long", day: "numeric", year: "numeric",
+    hour: "numeric", minute: "2-digit", timeZoneName: "short"
+  });
+}
+function formatDateShort(d) {
+  return d.toLocaleDateString(undefined, {weekday: "short", month: "short", day: "numeric"});
+}
+function formatTime(d) {
+  return d.toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
+}
+function formatDayHeading(isoDay) {
+  // Parse as UTC midnight, render in local time (kickoff days span 1-2 local days).
+  const d = new Date(isoDay + "T12:00:00Z");
+  return d.toLocaleDateString(undefined, {weekday: "long", month: "long", day: "numeric", year: "numeric"});
+}
+
+function statusBadge(m) {
+  if (liveStatuses.has(m.status))            return html`<span class="badge live">LIVE</span>`;
+  if (m.status === "POSTPONED")              return html`<span class="badge postponed">Postponed</span>`;
+  if (m.status === "CANCELLED")              return html`<span class="badge cancelled">Cancelled</span>`;
+  if (m.status === "SUSPENDED")              return html`<span class="badge suspended">Suspended</span>`;
+  return "";
+}
+
+function nextMatchCard(m, team) {
+  if (!m) {
+    return html`<div class="next-card empty">No upcoming matches on the schedule.</div>`;
+  }
+  const isHome = m.home_team_id === team.id;
+  const opp_id = isHome ? m.away_team_id : m.home_team_id;
+  const opp_t  = teamById.get(opp_id);
+  const oppName = isHome ? m.away_team : m.home_team;
+  return html`
+    <div class="next-card">
+      <div class="next-date">${formatDate(m.utc_date)}</div>
+      <div class="next-matchup">
+        <div class="opponent">
+          ${opp_t ? html`<img src="${opp_t.crest_url}" class="crest-md" alt="">` : ""}
+          <div>
+            <div class="vs-label">${isHome ? "vs" : "at"}</div>
+            <div class="opponent-name">${oppName ?? "TBD"}</div>
+          </div>
+        </div>
+        <div class="next-stage">${stageLabel(m.stage, m.group)}${statusBadge(m)}</div>
+      </div>
+      ${m.venue ? html`<div class="next-venue">${m.venue}</div>` : ""}
+    </div>`;
+}
+
+function scheduleTable(rows, team) {
+  return html`<table class="schedule">
+    <thead>
+      <tr>
+        <th>Date</th><th>Kick-off</th><th>Opponent</th><th>H/A</th>
+        <th>Stage</th><th>Score</th>
+      </tr>
+    </thead>
+    <tbody>
+    ${rows.map(m => {
+      const isHome = m.home_team_id === team.id;
+      const opp_id = isHome ? m.away_team_id : m.home_team_id;
+      const oppName = isHome ? m.away_team : m.home_team;
+      return html`<tr>
+        <td>${formatDateShort(m.utc_date)}</td>
+        <td>${formatTime(m.utc_date)}</td>
+        <td>${crestFor(oppName, opp_id)}</td>
+        <td>${isHome ? "H" : "A"}</td>
+        <td>${stageLabel(m.stage, m.group)}</td>
+        <td class="score">${m.score_display || ""} ${statusBadge(m)}</td>
+      </tr>`;
+    })}
+    </tbody>
+  </table>`;
+}
+
+function matchListTable(rows) {
+  return html`<table class="day-table">
+    <tbody>
+    ${rows.map(m => html`<tr>
+      <td class="time">${formatTime(m.utc_date)}</td>
+      <td class="team home">${crestFor(m.home_team, m.home_team_id)}</td>
+      <td class="vs">vs</td>
+      <td class="team away">${crestFor(m.away_team, m.away_team_id)}</td>
+      <td class="stage">${stageLabel(m.stage, m.group)}</td>
+      <td class="score">${m.score_display || ""} ${statusBadge(m)}</td>
+    </tr>`)}
+    </tbody>
+  </table>`;
+}
+```
+
+::: {.footer-note}
+Data: [football-data.org](https://www.football-data.org/) ·
+Code: [`worldcup26` R package](https://github.com/smach/worldcup26)
+:::

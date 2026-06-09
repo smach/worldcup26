@@ -1,0 +1,40 @@
+meta:
+  name: FIFA 2026 World Cup
+  link: https://github.com/smach/worldcup26
+
+color:
+  palette:
+    pitch-green: "#0e7a3f"
+    deep-blue:   "#1a3b6c"
+    sky:         "#5d8ac7"
+    amber:       "#e8b21f"
+    paper:       "#fbfbfd"
+    ink:         "#1a1a1a"
+    muted:       "#6b7280"
+    blue:        "#1a3b6c"
+    green:       "#0e7a3f"
+    orange:      "#e8b21f"
+  primary:    deep-blue
+  secondary:  muted
+  success:    pitch-green
+  warning:    amber
+  background: paper
+  foreground: ink
+
+typography:
+  fonts:
+    - family: Inter
+      source: google
+      weight: [400, 500, 600, 700]
+    - family: "JetBrains Mono"
+      source: google
+      weight: [400, 500]
+  base:
+    family: Inter
+    size: 16px
+    line-height: 1.55
+  headings:
+    family: Inter
+    weight: 600
+    line-height: 1.2
+  monospace: JetBrains Mono

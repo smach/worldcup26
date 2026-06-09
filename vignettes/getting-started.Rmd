@@ -1,0 +1,121 @@
+---
+title: "Getting started with worldcup26"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with worldcup26}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment  = "#>",
+  eval     = FALSE
+)
+```
+
+`worldcup26` wraps the football-data.org v4 API for the 2026 FIFA Men's World Cup. This vignette walks through the package's main functions end to end.
+
+## Setup
+
+Add your free API key to `~/.Renviron`:
+
+```
+FOOTBALL_DATA_API_KEY=your-key-here
+```
+
+Restart R, then load the package:
+
+```{r}
+library(worldcup26)
+```
+
+## List the participating teams
+
+```{r}
+teams <- list_teams()
+teams
+```
+
+`teams` is a tibble with 48 rows (one per participating nation) and columns `id`, `name`, `short_name`, `tla` (three-letter abbreviation), and `crest_url`.
+
+## Look up a team's schedule
+
+`team_schedule()` accepts any reasonable variation on a team's name --- the full canonical name, a common short form, a three-letter code, or an entry from the built-in alias table:
+
+```{r}
+team_schedule("United States")
+team_schedule("USA")
+team_schedule("us")
+```
+
+All three return the same tibble. Columns: `match_id`, `utc_date`, `stage`, `group`, `home_team`, `away_team`, `status`, `score_display`, `venue`.
+
+## What is the team's next match?
+
+```{r}
+team_next_match("Brazil")
+```
+
+Returns a single row (or an empty tibble if the team has no upcoming matches). "Upcoming" includes anything currently in progress.
+
+## What about past results?
+
+```{r}
+team_past_results("Argentina")
+```
+
+If a match has finished and the API hasn't posted the score yet, `score_display` will read `"no score available yet"`. Live matches show `"in progress"`.
+
+## All matches in one tibble
+
+For aggregate work --- e.g. building a tournament tracker or feeding a Quarto dashboard --- pull every match in a single call:
+
+```{r}
+matches <- all_matches()
+```
+
+## Caching
+
+API responses are cached on disk for one hour by default. To shorten the cache lifetime or clear it explicitly:
+
+```{r}
+options(worldcup26.cache_ttl = 600)  # 10 minutes
+clear_cache()
+```
+
+## Natural-language chat dashboard
+
+The package ships a small Shiny dashboard powered by [querychat](https://github.com/posit-dev/querychat). It lets you ask questions in plain English and the LLM translates them to SQL over a flat `matches` table:
+
+```{r}
+worldcup26_chat()
+```
+
+You need an `ANTHROPIC_API_KEY` in your environment. Get a key at <https://console.anthropic.com>. Sample questions:
+
+- *When is Canada's next game?*
+- *Show me all matches on June 15.*
+- *Which teams are in Group D?*
+- *List the round of 16 matches.*
+- *Has Brazil played yet?*
+
+The data the chat sees is whatever `chat_data()` returns. It's a denormalised tibble with one row per match plus convenience columns: `match_date`, `is_finished`, `is_upcoming`, `is_today`, three-letter codes, and a human-readable `stage_label`. Inspect it directly to understand what the chat is working with:
+
+```{r}
+chat_data()
+```
+
+## Reading the `score_display` column
+
+| Situation                               | Value                                     |
+|-----------------------------------------|-------------------------------------------|
+| Match yet to start                      | `""`                                      |
+| Match in progress                       | `"in progress"`                           |
+| Recently completed, no score posted yet | `"no score available yet"`                |
+| Completed match                         | e.g. `"2–1"`                         |
+| Knockout decided on penalties           | e.g. `"1–1 (4–3 PK)"`           |
+| Postponed / cancelled / suspended       | `"postponed"`, `"cancelled"`, `"suspended"` |
+
+The free football-data.org tier does not surface live in-match scores. If you need real-time scoreline updates, pair `worldcup26` with another source for matches that are currently underway.
