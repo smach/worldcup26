@@ -6,7 +6,7 @@ Authors@R:
 Description: An R wrapper for the football-data.org v4 API that retrieves
     team schedules and results for the 2026 FIFA World Cup. Provides
     helpers to list participating teams and to look up a team's full
-    schedule, next match, or past results.
+    schedule, next match, or past results. Created with Claude Code and also checked with Codex.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-US
