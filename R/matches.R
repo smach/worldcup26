@@ -4,7 +4,10 @@
 #' status information. Used by the team-filtered helpers, but exported
 #' so callers can also work with the full schedule directly.
 #'
-#' @return A tibble of matches with columns `match_id`, `utc_date`,
+#' @return A tibble of matches. `utc_date` is the raw UTC kickoff instant
+#'   (POSIXct, used for ordering); `match_date` (Date) and `kickoff_edt`
+#'   (text, e.g. `"9:00 PM EDT"`) present the kickoff in US Eastern, since
+#'   every World Cup venue is in North America. Other columns: `match_id`,
 #'   `matchday`, `stage`, `group`, `home_team_id`, `home_team`,
 #'   `away_team_id`, `away_team`, `status`, `score_display`,
 #'   `home_score`, `away_score`, `home_pk`, `away_pk`, `venue`.
@@ -47,6 +50,7 @@ all_matches <- function() {
     utc_date = out$utc_date
   )
 
+  out <- add_eastern_cols(out)
   dplyr::arrange(out, .data$utc_date)
 }
 
@@ -54,9 +58,10 @@ all_matches <- function() {
 #'
 #' @param team A team name, short name, three-letter code, or alias
 #'   (e.g. `"USA"`, `"United States"`, `"Korea"`).
-#' @return A tibble of matches involving that team, ordered by date.
-#'   Columns: `match_id`, `utc_date`, `stage`, `group`, `home_team`,
-#'   `away_team`, `status`, `score_display`, `venue`.
+#' @return A tibble of matches involving that team, ordered by date. Times
+#'   are presented in US Eastern. Columns: `match_id`, `match_date` (Date,
+#'   ET), `kickoff_edt` (text, e.g. `"9:00 PM EDT"`), `stage`, `group`,
+#'   `home_team`, `away_team`, `status`, `score_display`, `venue`.
 #' @seealso [team_next_match()], [team_past_results()]
 #' @export
 #' @examples
@@ -65,19 +70,31 @@ all_matches <- function() {
 #' team_schedule("Brazil")
 #' }
 team_schedule <- function(team) {
+  schedule_cols(team_matches(team))
+}
+
+#' All matches involving a team, with every column (including the raw
+#' `utc_date` instant the team-facing functions filter on).
+#' @noRd
+team_matches <- function(team) {
   teams   <- list_teams()
   matched <- resolve_team(team, teams)
   matches <- all_matches()
 
-  filtered <- matches[
+  matches[
     matches$home_team_id %in% matched$id |
       matches$away_team_id %in% matched$id,
   ]
-  dplyr::select(
-    filtered,
-    "match_id", "utc_date", "stage", "group",
+}
+
+#' Select the Eastern-presentation columns shown to users (no raw `utc_date`).
+#' `any_of()` keeps this robust when a caller supplies a partial tibble.
+#' @noRd
+schedule_cols <- function(df) {
+  dplyr::select(df, dplyr::any_of(c(
+    "match_id", "match_date", "kickoff_edt", "stage", "group",
     "home_team", "away_team", "status", "score_display", "venue"
-  )
+  )))
 }
 
 #' A team's next upcoming match
@@ -96,14 +113,14 @@ team_schedule <- function(team) {
 #' team_next_match("Brazil")
 #' }
 team_next_match <- function(team, now = Sys.time()) {
-  sched <- team_schedule(team)
+  sched <- team_matches(team)
   upcoming <- sched[
     !is.na(sched$utc_date) &
       (sched$utc_date >= now | sched$status %in% live_statuses()) &
       !sched$status %in% c(final_statuses(), inactive_statuses()),
   ]
-  if (nrow(upcoming) == 0L) return(upcoming)
-  upcoming[1L, ]
+  if (nrow(upcoming) == 0L) return(schedule_cols(upcoming))
+  schedule_cols(upcoming[1L, ])
 }
 
 #' A team's past results
@@ -123,12 +140,13 @@ team_next_match <- function(team, now = Sys.time()) {
 #' team_past_results("Argentina")
 #' }
 team_past_results <- function(team, now = Sys.time()) {
-  sched <- team_schedule(team)
-  sched[
+  sched <- team_matches(team)
+  past <- sched[
     !is.na(sched$utc_date) & sched$utc_date < now &
       !sched$status %in% live_statuses() &
       !sched$status %in% inactive_statuses(),
   ]
+  schedule_cols(past)
 }
 
 #' Parse an ISO-8601 UTC string into POSIXct.
@@ -137,15 +155,27 @@ parse_utc <- function(x) {
   as.POSIXct(x, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
 }
 
-#' Today's date in UTC.
+#' Format a UTC POSIXct as a 12-hour US Eastern time string, e.g. "9:00 PM EDT".
 #'
-#' Match dates (`match_date`) are UTC dates, so date-granularity comparisons
-#' must use the UTC "today", not the machine's local date. `Sys.Date()` returns
-#' the local date, which can be a day off from UTC in the evening in the
-#' Americas.
+#' The World Cup runs entirely within Eastern Daylight Time, so the label is
+#' always EDT. `%I` zero-pads the hour ("09:00"); strip the leading zero.
 #' @noRd
-utc_today <- function() {
-  as.Date(Sys.time(), tz = "UTC")
+format_kickoff_edt <- function(x) {
+  t <- format(x, "%I:%M %p", tz = "America/New_York")
+  t <- sub("^0", "", t)
+  ifelse(is.na(x), NA_character_, paste0(t, " EDT"))
+}
+
+#' Add the Eastern presentation columns (`match_date`, `kickoff_edt`) just
+#' after `utc_date`. The instant in `utc_date` is unchanged.
+#' @noRd
+add_eastern_cols <- function(df) {
+  dplyr::mutate(
+    df,
+    match_date  = as.Date(.data$utc_date, tz = "America/New_York"),
+    kickoff_edt = format_kickoff_edt(.data$utc_date),
+    .after = "utc_date"
+  )
 }
 
 #' Today's date in US Eastern time.
@@ -163,6 +193,8 @@ empty_matches <- function() {
   tibble::tibble(
     match_id      = integer(),
     utc_date      = as.POSIXct(character(), tz = "UTC"),
+    match_date    = as.Date(character()),
+    kickoff_edt   = character(),
     matchday      = integer(),
     stage         = character(),
     group         = character(),

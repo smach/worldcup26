@@ -7,7 +7,10 @@
 all_matches()
 }
 \value{
-A tibble of matches with columns \code{match_id}, \code{utc_date},
+A tibble of matches. \code{utc_date} is the raw UTC kickoff instant
+(POSIXct, used for ordering); \code{match_date} (Date) and \code{kickoff_edt}
+(text, e.g. \code{"9:00 PM EDT"}) present the kickoff in US Eastern, since
+every World Cup venue is in North America. Other columns: \code{match_id},
 \code{matchday}, \code{stage}, \code{group}, \code{home_team_id}, \code{home_team},
 \code{away_team_id}, \code{away_team}, \code{status}, \code{score_display},
 \code{home_score}, \code{away_score}, \code{home_pk}, \code{away_pk}, \code{venue}.

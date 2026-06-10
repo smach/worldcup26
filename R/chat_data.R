@@ -29,10 +29,10 @@ chat_data <- function(
   tla_by_id <- stats::setNames(teams$tla, as.character(teams$id))
 
   out <- matches |>
+    # Present dates and times in US Eastern (every venue is in North America);
+    # adds `match_date` and `kickoff_edt` consistent with the rest of the package.
+    add_eastern_cols() |>
     dplyr::mutate(
-      # Present dates and times in US Eastern (every venue is in North America).
-      match_date = as.Date(.data$utc_date, tz = "America/New_York"),
-      kickoff_edt = format(.data$utc_date, "%H:%M EDT", tz = "America/New_York"),
       home_tla = unname(tla_by_id[as.character(.data$home_team_id)]),
       away_tla = unname(tla_by_id[as.character(.data$away_team_id)]),
       group_letter = ifelse(

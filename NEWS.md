@@ -1,3 +1,15 @@
+# worldcup26 0.3.0
+
+* All dates and times are now presented in US Eastern (EDT) across the whole
+  package, since every World Cup venue is in North America. `team_schedule()`,
+  `team_next_match()`, `team_past_results()`, and `all_matches()` now return a
+  `match_date` (Eastern `Date`) and a readable `kickoff_edt` (e.g.
+  `"9:00 PM EDT"`). `all_matches()` keeps the raw `utc_date` (UTC) for
+  ordering; the team-facing functions no longer surface `utc_date`. The chat
+  data and the companion Quarto site present Eastern times to match.
+
+  _[This update was written by Claude]_
+
 # worldcup26 0.2.0
 
 * The hourly site build now publishes the tournament data as plain files

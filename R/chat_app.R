@@ -56,7 +56,7 @@ worldcup26_chat <- function(data    = chat_data(),
     client             = client,
     greeting           = greeting,
     data_description   = chat_data_description(),
-    extra_instructions = chat_extra_instructions(today = utc_today())
+    extra_instructions = chat_extra_instructions(today = eastern_today())
   )
   querychat::querychat_app(config, ...)
 }
@@ -99,7 +99,8 @@ chat_data_description <- function() {
     "  ordering matches chronologically, not for display.",
     "- `match_date` (date): the kickoff date in US Eastern (EDT). Use this",
     "  column for date-based queries like \"matches on June 15\".",
-    "- `kickoff_edt` (text): kickoff time formatted as `HH:MM EDT`.",
+    "- `kickoff_edt` (text): kickoff time formatted as `9:00 PM EDT`",
+    "  (12-hour, US Eastern).",
     "- `matchday` (integer): the round within the group stage (1, 2, or 3);",
     "  NULL for knockout matches.",
     "- `stage` (text): one of `GROUP_STAGE`, `LAST_32`, `LAST_16`,",

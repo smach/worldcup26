@@ -57,6 +57,15 @@ team_schedule("us")
 Common aliases also work: `"Korea"` → South Korea, `"Czech Republic"` →
 Czechia, `"Cape Verde"` → Cape Verde Islands.
 
+## Times are US Eastern (EDT)
+
+Every World Cup venue is in North America, so all dates and times are
+presented in US Eastern Time. `team_schedule()`, `team_next_match()`,
+`team_past_results()`, and `all_matches()` return a `match_date` (a `Date`
+in Eastern) and a human-readable `kickoff_edt` (e.g. `"9:00 PM EDT"`).
+`all_matches()` also keeps the raw `utc_date` (UTC `POSIXct`) for ordering
+or your own timezone conversions.
+
 ## Score display
 
 Match scores are reported in a single `score_display` column:

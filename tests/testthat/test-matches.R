@@ -54,7 +54,8 @@ test_that("team_next_match() uses the supplied reference time", {
   expect_s3_class(nxt, "tbl_df")
   expect_equal(nrow(nxt), 1L)
   expect_true("Brazil" %in% c(nxt$home_team, nxt$away_team))
-  expect_gte(nxt$utc_date, as.POSIXct("2026-06-01", tz = "UTC"))
+  expect_false("utc_date" %in% names(nxt))
+  expect_gte(nxt$match_date, as.Date("2026-06-01"))
 
   none <- team_next_match(
     "Brazil",
@@ -70,7 +71,10 @@ test_that("team_past_results() uses the supplied reference time", {
 
   expect_s3_class(past, "tbl_df")
   expect_gt(nrow(past), 0L)
-  expect_true(all(past$utc_date < now))
+  expect_false("utc_date" %in% names(past))
+  # now is 2026-07-01 00:00 UTC == 2026-06-30 EDT, so every past match's
+  # Eastern date is strictly before July 1.
+  expect_true(all(past$match_date < as.Date("2026-07-01")))
 })
 
 test_that("live matches are upcoming rather than past results", {
@@ -89,7 +93,7 @@ test_that("live matches are upcoming rather than past results", {
     venue = NA_character_
   )
   testthat::local_mocked_bindings(
-    team_schedule = function(team) {
+    team_matches = function(team) {
       if (team == "inactive") schedule[-1, ] else schedule
     },
     .package = "worldcup26"

@@ -18,7 +18,9 @@ matches <- all_matches()
 # and re-construct Date objects on the JS side.
 matches_for_js <- matches |>
   mutate(utc_date_str = format(utc_date, "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")) |>
-  select(-utc_date)
+  # The JS does its own EDT formatting from utc_date_str; drop the R-side
+  # datetime/Eastern columns so a Date doesn't round-trip through ojs_define().
+  select(-utc_date, -match_date, -kickoff_edt)
 
 ojs_define(
   teams_data    = teams,

@@ -20,6 +20,8 @@ test_that("chat_data() column types are the ones the chat expects", {
 
   expect_s3_class(d$utc_date, "POSIXct")
   expect_s3_class(d$match_date, "Date")
+  # kickoff_edt is 12-hour US Eastern, e.g. "3:00 PM EDT".
+  expect_match(d$kickoff_edt[1], "(AM|PM) EDT$")
   expect_type(d$knockout,    "logical")
   expect_type(d$is_finished, "logical")
   expect_type(d$is_upcoming, "logical")
