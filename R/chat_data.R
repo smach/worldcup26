@@ -12,8 +12,9 @@
 #' @param teams A teams tibble. Defaults to [list_teams()]. Used to attach
 #'   three-letter codes (`home_tla`, `away_tla`) to each row.
 #' @param today The reference date for the `is_today` flag and for
-#'   computing pastness/upcomingness. A UTC date (to match `match_date`,
-#'   which is in UTC). Defaults to today's date in UTC.
+#'   computing pastness/upcomingness. A US Eastern date (to match
+#'   `match_date`, which is in US Eastern). Defaults to today's date in
+#'   US Eastern.
 #' @return A tibble of matches.
 #' @export
 #' @examples
@@ -23,14 +24,15 @@
 chat_data <- function(
   matches = all_matches(),
   teams = list_teams(),
-  today = utc_today()
+  today = eastern_today()
 ) {
   tla_by_id <- stats::setNames(teams$tla, as.character(teams$id))
 
   out <- matches |>
     dplyr::mutate(
-      match_date = as.Date(.data$utc_date),
-      kickoff_utc = format(.data$utc_date, "%H:%M UTC"),
+      # Present dates and times in US Eastern (every venue is in North America).
+      match_date = as.Date(.data$utc_date, tz = "America/New_York"),
+      kickoff_edt = format(.data$utc_date, "%H:%M EDT", tz = "America/New_York"),
       home_tla = unname(tla_by_id[as.character(.data$home_team_id)]),
       away_tla = unname(tla_by_id[as.character(.data$away_team_id)]),
       group_letter = ifelse(
@@ -50,7 +52,7 @@ chat_data <- function(
       "match_id",
       "utc_date",
       "match_date",
-      "kickoff_utc",
+      "kickoff_edt",
       "matchday",
       "stage",
       "stage_label",

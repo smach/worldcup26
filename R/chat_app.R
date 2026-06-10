@@ -95,10 +95,11 @@ chat_data_description <- function() {
     "Columns:",
     "",
     "- `match_id` (integer): football-data.org match identifier.",
-    "- `utc_date` (timestamp): kickoff time in UTC.",
-    "- `match_date` (date): the kickoff date in UTC. Use this column for",
-    "  date-based queries like \"matches on June 15\".",
-    "- `kickoff_utc` (text): kickoff time formatted as `HH:MM UTC`.",
+    "- `utc_date` (timestamp): the raw kickoff instant in UTC. Use it only for",
+    "  ordering matches chronologically, not for display.",
+    "- `match_date` (date): the kickoff date in US Eastern (EDT). Use this",
+    "  column for date-based queries like \"matches on June 15\".",
+    "- `kickoff_edt` (text): kickoff time formatted as `HH:MM EDT`.",
     "- `matchday` (integer): the round within the group stage (1, 2, or 3);",
     "  NULL for knockout matches.",
     "- `stage` (text): one of `GROUP_STAGE`, `LAST_32`, `LAST_16`,",
@@ -124,7 +125,7 @@ chat_data_description <- function() {
     "- `is_finished` (boolean): TRUE when `status` is `FINISHED` or `AWARDED`.",
     "- `is_upcoming` (boolean): TRUE when the match has not yet been played",
     "  or is live (and was not cancelled, postponed, or suspended).",
-    "- `is_today` (boolean): TRUE when `match_date` equals today's UTC date.",
+    "- `is_today` (boolean): TRUE when `match_date` equals today's Eastern date.",
     "- `venue` (text): host stadium. Currently NULL for every match",
     "  (the free API tier does not expose venues).",
     "",
@@ -136,9 +137,9 @@ chat_data_description <- function() {
 
 #' Tournament-specific guidance and today's date, fed to the LLM.
 #' @noRd
-chat_extra_instructions <- function(today = utc_today()) {
+chat_extra_instructions <- function(today = eastern_today()) {
   sprintf(paste(
-    "Today's date is %s (UTC, ISO `%s`). When the user asks about \"today\",",
+    "Today's date is %s (US Eastern, ISO `%s`). When the user asks about \"today\",",
     "\"tomorrow\", \"this week\", \"next week\", or \"the next match\",",
     "compute dates relative to today.",
     "",
@@ -157,8 +158,9 @@ chat_extra_instructions <- function(today = utc_today()) {
     "score. Do **not** invent scores \u2014 if `home_score` and `away_score`",
     "are NULL, the score is not yet available.",
     "",
-    "All times in `utc_date` are UTC. If the user asks about local times,",
-    "say so explicitly and remind them the data is in UTC.",
+    "All match times are presented in US Eastern (EDT) — see `kickoff_edt`",
+    "and `match_date` — because every World Cup venue is in North America.",
+    "When you mention a kickoff time, give it in EDT and label it as such.",
     sep = "\n"
   ),
   format(today, "%A, %B %e, %Y"),

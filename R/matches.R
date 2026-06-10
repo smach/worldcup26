@@ -148,6 +148,16 @@ utc_today <- function() {
   as.Date(Sys.time(), tz = "UTC")
 }
 
+#' Today's date in US Eastern time.
+#'
+#' The chat presents match dates in US Eastern (every World Cup venue is in
+#' North America), so date-granularity comparisons must use the Eastern "today",
+#' not the machine's local date or UTC.
+#' @noRd
+eastern_today <- function() {
+  as.Date(Sys.time(), tz = "America/New_York")
+}
+
 #' @noRd
 empty_matches <- function() {
   tibble::tibble(

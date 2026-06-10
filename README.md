@@ -206,8 +206,10 @@ The data refreshes on the same hourly schedule as the site (match window
 only — 15:00–06:00 UTC). The `is_today`, `is_upcoming`, and `is_finished`
 flags are computed as of the `generated_utc` time in `metadata.json`;
 recompute them from `utc_date` / `match_date` if you need them relative to a
-different moment. Timestamps are UTC, and scores are subject to the free
-tier's delay (see [Score display](#score-display)).
+different moment. `match_date` and `kickoff_edt` are in US Eastern (EDT) —
+every World Cup venue is in North America — while `utc_date` is the raw UTC
+kickoff instant; scores are subject to the free tier's delay (see
+[Score display](#score-display)).
 
 The files are produced by `data-raw/publish_data.R`, run as a step in
 `.github/workflows/publish.yml`.

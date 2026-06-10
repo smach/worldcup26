@@ -4,7 +4,11 @@
 \alias{chat_data}
 \title{Build the flat matches table used by the chat dashboard}
 \usage{
-chat_data(matches = all_matches(), teams = list_teams(), today = utc_today())
+chat_data(
+  matches = all_matches(),
+  teams = list_teams(),
+  today = eastern_today()
+)
 }
 \arguments{
 \item{matches}{A matches tibble. Defaults to \code{\link[=all_matches]{all_matches()}}.}
@@ -13,8 +17,9 @@ chat_data(matches = all_matches(), teams = list_teams(), today = utc_today())
 three-letter codes (\code{home_tla}, \code{away_tla}) to each row.}
 
 \item{today}{The reference date for the \code{is_today} flag and for
-computing pastness/upcomingness. A UTC date (to match \code{match_date},
-which is in UTC). Defaults to today's date in UTC.}
+computing pastness/upcomingness. A US Eastern date (to match
+\code{match_date}, which is in US Eastern). Defaults to today's date in
+US Eastern.}
 }
 \value{
 A tibble of matches.

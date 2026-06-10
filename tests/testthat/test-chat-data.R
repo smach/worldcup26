@@ -5,7 +5,7 @@ test_that("chat_data() returns the expected columns and row count", {
   expect_s3_class(d, "tbl_df")
   expect_equal(nrow(d), 104)
   expect_true(all(c(
-    "match_id", "utc_date", "match_date", "kickoff_utc", "matchday",
+    "match_id", "utc_date", "match_date", "kickoff_edt", "matchday",
     "stage", "stage_label", "knockout", "group_letter",
     "home_team", "home_tla", "away_team", "away_tla",
     "status", "score_display",

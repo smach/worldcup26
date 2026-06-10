@@ -23,7 +23,7 @@ matches_for_js <- matches |>
 ojs_define(
   teams_data    = teams,
   matches_data  = matches_for_js,
-  last_updated  = format(Sys.time(), "%Y-%m-%d %H:%M UTC", tz = "UTC")
+  last_updated  = format(Sys.time(), "%Y-%m-%d %H:%M EDT", tz = "America/New_York")
 )
 ```
 
@@ -36,8 +36,10 @@ in-match scores. During a match, this page may show the match as
 temporarily show *"no score available yet"* until the delayed score data
 is available.
 
-*Last rebuilt: `r format(Sys.time(), "%B %e, %Y at %H:%M UTC", tz = "UTC")`*
+*Last rebuilt: `r format(Sys.time(), "%B %e, %Y at %H:%M EDT", tz = "America/New_York")`*
 :::
+
+*All times shown in US Eastern Time (EDT).*
 
 ```{ojs}
 //| echo: false
@@ -125,7 +127,7 @@ pastMatches.length > 0
 //| echo: false
 matchesByDay = d3.groups(
   matches,
-  m => m.utc_date.toISOString().slice(0, 10)
+  m => nyDayKey(m.utc_date)
 ).sort(([a], [b]) => a.localeCompare(b))
 ```
 
@@ -188,22 +190,28 @@ function stageLabel(stage, group) {
     .replace(/\b\w/g, c => c.toUpperCase());
 }
 
+// All times are shown in US Eastern (EDT); the World Cup runs entirely within
+// EDT and every venue is in North America.
+nyDayFmt = new Intl.DateTimeFormat("en-CA", {timeZone: "America/New_York"})
+function nyDayKey(d) { return nyDayFmt.format(d); }   // "2026-06-12" in Eastern
+
 function formatDate(d) {
-  return d.toLocaleString(undefined, {
+  return d.toLocaleString("en-US", {
     weekday: "long", month: "long", day: "numeric", year: "numeric",
-    hour: "numeric", minute: "2-digit", timeZoneName: "short"
-  });
+    hour: "numeric", minute: "2-digit", timeZone: "America/New_York"
+  }) + " EDT";
 }
 function formatDateShort(d) {
-  return d.toLocaleDateString(undefined, {weekday: "short", month: "short", day: "numeric"});
+  return d.toLocaleDateString("en-US", {weekday: "short", month: "short", day: "numeric", timeZone: "America/New_York"});
 }
 function formatTime(d) {
-  return d.toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
+  return d.toLocaleTimeString("en-US", {hour: "numeric", minute: "2-digit", timeZone: "America/New_York"}) + " EDT";
 }
 function formatDayHeading(isoDay) {
-  // Parse as UTC midnight, render in local time (kickoff days span 1-2 local days).
+  // isoDay is already the Eastern calendar date; format it as UTC midday so the
+  // weekday/month/day read back out without a second timezone shift.
   const d = new Date(isoDay + "T12:00:00Z");
-  return d.toLocaleDateString(undefined, {weekday: "long", month: "long", day: "numeric", year: "numeric"});
+  return d.toLocaleDateString("en-US", {weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC"});
 }
 
 function statusBadge(m) {
