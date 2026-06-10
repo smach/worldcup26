@@ -41,10 +41,14 @@ jobs:
           extra-packages: |
             any::rmarkdown
             any::knitr
+            any::jsonlite
             local::.
 
       - name: Render site
         run: quarto render
+
+      - name: Build downloadable data files
+        run: Rscript data-raw/publish_data.R
 
       - name: Publish to gh-pages
         uses: quarto-dev/quarto-actions/publish@v2
