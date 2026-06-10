@@ -169,6 +169,48 @@ window (15:00–06:00 UTC) and skips the quiet hours (07:00–14:00 UTC /
 prominent banner on the page tells visitors that live in-match scores
 are not available on the free API tier.
 
+## Downloadable data
+
+The hourly site build also publishes the tournament data as plain files on
+the GitHub Pages site, so you can reuse it from any language without an API
+key (and without hitting the football-data.org rate limit yourself). Base URL:
+
+    https://smach.github.io/worldcup26/data/
+
+| File | What it is |
+|------|------------|
+| [`chat_data.json`](https://smach.github.io/worldcup26/data/chat_data.json) | One row per match, denormalised (team names, three-letter codes, stage labels, scores, status, convenience flags). JSON. |
+| [`chat_data.csv`](https://smach.github.io/worldcup26/data/chat_data.csv) | Same table as CSV. |
+| [`teams.json`](https://smach.github.io/worldcup26/data/teams.json) / [`teams.csv`](https://smach.github.io/worldcup26/data/teams.csv) | Participating teams. |
+| [`worldcup26.rds`](https://smach.github.io/worldcup26/data/worldcup26.rds) | `list(matches, teams, chat_data)` for R, with exact types preserved (`POSIXct` kickoff times, integer `NA`s, logicals). |
+| [`metadata.json`](https://smach.github.io/worldcup26/data/metadata.json) | Generation timestamp, row counts, and a file index. |
+
+Examples:
+
+``` r
+# R — lossless, no parsing needed:
+data <- readRDS(url("https://smach.github.io/worldcup26/data/worldcup26.rds"))
+data$chat_data
+
+# R — portable:
+matches <- jsonlite::fromJSON("https://smach.github.io/worldcup26/data/chat_data.json")
+```
+
+``` python
+import pandas as pd
+matches = pd.read_csv("https://smach.github.io/worldcup26/data/chat_data.csv")
+```
+
+The data refreshes on the same hourly schedule as the site (match window
+only — 15:00–06:00 UTC). The `is_today`, `is_upcoming`, and `is_finished`
+flags are computed as of the `generated_utc` time in `metadata.json`;
+recompute them from `utc_date` / `match_date` if you need them relative to a
+different moment. Timestamps are UTC, and scores are subject to the free
+tier's delay (see [Score display](#score-display)).
+
+The files are produced by `data-raw/publish_data.R`, run as a step in
+`.github/workflows/publish.yml`.
+
 ## License
 
 MIT.
