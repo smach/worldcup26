@@ -1,3 +1,16 @@
+# worldcup26 0.2.0
+
+* The hourly site build now publishes the tournament data as plain files
+  on the GitHub Pages site (`data/` directory), so it can be reused from
+  any language without an API key: `chat_data.json`/`.csv`,
+  `teams.json`/`.csv`, a lossless `worldcup26.rds`, and a `metadata.json`
+  manifest. Produced by `data-raw/publish_data.R` as a step in the publish
+  workflow.
+* Bumped `actions/checkout` to v5 (Node 24) in the GitHub Actions
+  workflows.
+
+  _[This update was written by Claude]_
+
 # worldcup26 0.1.0
 
 * Initial public release.
