@@ -61,6 +61,7 @@ Czechia, `"Cape Verde"` → Cape Verde Islands.
 
 Match scores are reported in a single `score_display` column:
 
+
 | Situation                               | Value                      |
 |-----------------------------------------|----------------------------|
 | Match yet to start                      | `""`                       |
