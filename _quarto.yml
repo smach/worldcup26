@@ -9,6 +9,7 @@ project:
 website:
   title: "FIFA 2026 World Cup"
   description: "Team schedules and results for the 2026 FIFA Men's World Cup."
+  favicon: favicon.ico
   navbar:
     background: primary
     left:

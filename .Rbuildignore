@@ -4,6 +4,7 @@
 ^data-raw$
 ^_quarto\.yml$
 ^_brand\.yml$
+^favicon\.ico$
 ^index\.qmd$
 ^styles\.css$
 ^docs$

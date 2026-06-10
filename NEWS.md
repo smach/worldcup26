@@ -6,6 +6,7 @@
   `teams.json`/`.csv`, a lossless `worldcup26.rds`, and a `metadata.json`
   manifest. Produced by `data-raw/publish_data.R` as a step in the publish
   workflow.
+* Added a soccer-ball favicon to the companion Quarto site.
 * Bumped `actions/checkout` to v5 (Node 24) in the GitHub Actions
   workflows.
 
