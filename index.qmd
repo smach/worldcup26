@@ -302,6 +302,22 @@ function nextMatchCard(m, team) {
     </div>`;
 }
 
+// `score_display` from R is always home–away. On a team page we want the
+// selected team's goals first, so the same match reads as a win for one
+// side and a loss for the other. Non-numeric strings ("in progress",
+// "no score available yet", "postponed", "") pass through unchanged.
+function flipScore(s) {
+  if (!s) return s;
+  const m = s.match(/^(\d+)–(\d+)(\s*\((?:(\d+)–(\d+)\s*PK|live)\))?$/);
+  if (!m) return s;
+  const [, h, a, suffix, pkh, pka] = m;
+  let out = `${a}–${h}`;
+  if (suffix) {
+    out += pkh !== undefined ? ` (${pka}–${pkh} PK)` : ` (live)`;
+  }
+  return out;
+}
+
 function scheduleTable(rows, team) {
   return html`<table class="schedule">
     <thead>
@@ -315,13 +331,14 @@ function scheduleTable(rows, team) {
       const isHome = m.home_team_id === team.id;
       const opp_id = isHome ? m.away_team_id : m.home_team_id;
       const oppName = isHome ? m.away_team : m.home_team;
+      const score = isHome ? m.score_display : flipScore(m.score_display);
       return html`<tr>
         <td>${formatDateShort(m.utc_date)}</td>
         <td>${formatTime(m.utc_date)}</td>
         <td>${crestFor(oppName, opp_id)}</td>
         <td>${isHome ? "H" : "A"}</td>
         <td>${stageLabel(m.stage, m.group)}</td>
-        <td class="score">${m.score_display || ""} ${statusBadge(m)}</td>
+        <td class="score">${score || ""} ${statusBadge(m)}</td>
       </tr>`;
     })}
     </tbody>
