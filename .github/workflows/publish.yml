@@ -4,11 +4,8 @@ on:
   push:
     branches: [main]
   schedule:
-    # Hourly during match windows (15:00–06:00 UTC), skip overnight lull.
-    - cron: "0 0-6,15-23 * * *"
-    # Every 10 min during the same windows; only does work in live mode
-    # (gated by the job `if:` below) so free-tier runs aren't wasted.
-    - cron: "*/10 0-6,15-23 * * *"
+    # Every 12 minutes during match windows (15:00–06:00 UTC), skip overnight lull.
+    - cron: "0,12,24,36,48 0-6,15-23 * * *"
   workflow_dispatch:
 
 permissions:

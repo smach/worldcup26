@@ -200,7 +200,7 @@ Site files (all excluded from the package build via `.Rbuildignore`):
 - `.github/workflows/publish.yml` — rebuilds the page on every push to
   `main` and publishes to the `gh-pages` branch. A cron schedule
   rebuilds hourly during the match window (15:00–06:00 UTC / 11 AM–2 AM
-  ET), skipping the overnight lull when no games are on
+  ET), skipping the overnight lull when no games are on _Update: I've changed it to every 12 minutes because I'm impatient :)_
 - `.github/workflows/R-CMD-check.yaml` — runs package checks on Ubuntu
   and Windows for pushes and pull requests
 
