@@ -14,7 +14,7 @@
     "away_team": "South Africa",
     "away_tla": "RSA",
     "status": "TIMED",
-    "score_display": "",
+    "score_display": "no score available yet",
     "home_score": null,
     "away_score": null,
     "home_pk": null,
