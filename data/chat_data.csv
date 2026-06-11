@@ -1,4 +1,4 @@
-"match_id","utc_date","match_date","kickoff_edt","matchday","stage","stage_label","knockout","group_letter","home_team","home_tla","away_team","away_tla","status","score_display","home_score","away_score","home_pk","away_pk","is_finished","is_upcoming","is_today","venue"
+"match_id","utc_date","match_date","kickoff","matchday","stage","stage_label","knockout","group_letter","home_team","home_tla","away_team","away_tla","status","score_display","home_score","away_score","home_pk","away_pk","is_finished","is_upcoming","is_today","venue"
 537327,2026-06-11 19:00:00,2026-06-11,"3:00 PM EDT",1,"GROUP_STAGE","Group stage",FALSE,"A","Mexico","MEX","South Africa","RSA","TIMED","",,,,,FALSE,TRUE,FALSE,
 537328,2026-06-12 02:00:00,2026-06-11,"10:00 PM EDT",1,"GROUP_STAGE","Group stage",FALSE,"A","South Korea","KOR","Czechia","CZE","TIMED","",,,,,FALSE,TRUE,FALSE,
 537333,2026-06-12 19:00:00,2026-06-12,"3:00 PM EDT",1,"GROUP_STAGE","Group stage",FALSE,"B","Canada","CAN","Bosnia-Herzegovina","BIH","TIMED","",,,,,FALSE,TRUE,FALSE,
