@@ -90,7 +90,7 @@ tz = selectedTz
 //| echo: false
 viewof selectedTeamName = Inputs.select(
   teams.map(t => t.name),
-  {label: "Team", value: "Brazil"}
+  {label: "Team", value: "Bosnia-Herzegovina"}
 )
 ```
 
