@@ -4,15 +4,20 @@
 \alias{all_matches}
 \title{Fetch every World Cup match from the API.}
 \usage{
-all_matches()
+all_matches(tz = "America/New_York")
+}
+\arguments{
+\item{tz}{A single time-zone name (see \code{\link[=OlsonNames]{OlsonNames()}}) used for the
+\code{match_date} and \code{kickoff} display columns. Defaults to
+\code{"America/New_York"} (US Eastern), since every World Cup venue is in
+North America. The raw \code{utc_date} instant is unaffected.}
 }
 \value{
 A tibble of matches. \code{utc_date} is the raw UTC kickoff instant
-(POSIXct, used for ordering); \code{match_date} (Date) and \code{kickoff_edt}
-(text, e.g. \code{"9:00 PM EDT"}) present the kickoff in US Eastern, since
-every World Cup venue is in North America. Other columns: \code{match_id},
-\code{matchday}, \code{stage}, \code{group}, \code{home_team_id}, \code{home_team},
-\code{away_team_id}, \code{away_team}, \code{status}, \code{score_display},
+(POSIXct, used for ordering); \code{match_date} (Date) and \code{kickoff}
+(text, e.g. \code{"9:00 PM EDT"}) present the kickoff in \code{tz}. Other
+columns: \code{match_id}, \code{matchday}, \code{stage}, \code{group}, \code{home_team_id},
+\code{home_team}, \code{away_team_id}, \code{away_team}, \code{status}, \code{score_display},
 \code{home_score}, \code{away_score}, \code{home_pk}, \code{away_pk}, \code{venue}.
 }
 \description{
@@ -23,5 +28,6 @@ so callers can also work with the full schedule directly.
 \examples{
 \dontrun{
 all_matches()
+all_matches(tz = "America/Los_Angeles")
 }
 }

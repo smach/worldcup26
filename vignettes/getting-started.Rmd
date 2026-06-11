@@ -50,7 +50,15 @@ team_schedule("USA")
 team_schedule("us")
 ```
 
-All three return the same tibble. Times are shown in US Eastern (EDT), since every World Cup venue is in North America. Columns: `match_id`, `match_date` (a `Date` in US Eastern), `kickoff_edt` (e.g. `"9:00 PM EDT"`), `stage`, `group`, `home_team`, `away_team`, `status`, `score_display`, `venue`.
+All three return the same tibble. Times default to US Eastern (EDT), since every World Cup venue is in North America. Columns: `match_id`, `match_date` (a `Date`), `kickoff` (e.g. `"9:00 PM EDT"`), `stage`, `group`, `home_team`, `away_team`, `status`, `score_display`, `venue`.
+
+To see kickoff times in another zone, pass `tz` (any name from `OlsonNames()`). `match_date` and `kickoff` are recomputed for that zone; the underlying match is the same:
+
+```{r}
+team_schedule("USA", tz = "America/Los_Angeles")
+```
+
+The same `tz` argument is available on `team_next_match()`, `team_past_results()`, and `all_matches()`.
 
 ## What is the team's next match?
 

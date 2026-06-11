@@ -4,16 +4,20 @@
 \alias{team_schedule}
 \title{Full World Cup schedule for one team}
 \usage{
-team_schedule(team)
+team_schedule(team, tz = "America/New_York")
 }
 \arguments{
 \item{team}{A team name, short name, three-letter code, or alias
 (e.g. \code{"USA"}, \code{"United States"}, \code{"Korea"}).}
+
+\item{tz}{A single time-zone name (see \code{\link[=OlsonNames]{OlsonNames()}}) used for the
+\code{match_date} and \code{kickoff} display columns. Defaults to
+\code{"America/New_York"} (US Eastern).}
 }
 \value{
 A tibble of matches involving that team, ordered by date. Times
-are presented in US Eastern. Columns: \code{match_id}, \code{match_date} (Date,
-ET), \code{kickoff_edt} (text, e.g. \code{"9:00 PM EDT"}), \code{stage}, \code{group},
+are presented in \code{tz}. Columns: \code{match_id}, \code{match_date} (Date),
+\code{kickoff} (text, e.g. \code{"9:00 PM EDT"}), \code{stage}, \code{group},
 \code{home_team}, \code{away_team}, \code{status}, \code{score_display}, \code{venue}.
 }
 \description{
@@ -23,6 +27,7 @@ Full World Cup schedule for one team
 \dontrun{
 team_schedule("USA")
 team_schedule("Brazil")
+team_schedule("USA", tz = "America/Los_Angeles")
 }
 }
 \seealso{

@@ -5,7 +5,7 @@ test_that("chat_data() returns the expected columns and row count", {
   expect_s3_class(d, "tbl_df")
   expect_equal(nrow(d), 104)
   expect_true(all(c(
-    "match_id", "utc_date", "match_date", "kickoff_edt", "matchday",
+    "match_id", "utc_date", "match_date", "kickoff", "matchday",
     "stage", "stage_label", "knockout", "group_letter",
     "home_team", "home_tla", "away_team", "away_tla",
     "status", "score_display",
@@ -20,8 +20,8 @@ test_that("chat_data() column types are the ones the chat expects", {
 
   expect_s3_class(d$utc_date, "POSIXct")
   expect_s3_class(d$match_date, "Date")
-  # kickoff_edt is 12-hour US Eastern, e.g. "3:00 PM EDT".
-  expect_match(d$kickoff_edt[1], "(AM|PM) EDT$")
+  # kickoff is 12-hour US Eastern, e.g. "3:00 PM EDT".
+  expect_match(d$kickoff[1], "(AM|PM) EDT$")
   expect_type(d$knockout,    "logical")
   expect_type(d$is_finished, "logical")
   expect_type(d$is_upcoming, "logical")

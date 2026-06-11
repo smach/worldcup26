@@ -4,19 +4,24 @@
 #' status information. Used by the team-filtered helpers, but exported
 #' so callers can also work with the full schedule directly.
 #'
+#' @param tz A single time-zone name (see [OlsonNames()]) used for the
+#'   `match_date` and `kickoff` display columns. Defaults to
+#'   `"America/New_York"` (US Eastern), since every World Cup venue is in
+#'   North America. The raw `utc_date` instant is unaffected.
 #' @return A tibble of matches. `utc_date` is the raw UTC kickoff instant
-#'   (POSIXct, used for ordering); `match_date` (Date) and `kickoff_edt`
-#'   (text, e.g. `"9:00 PM EDT"`) present the kickoff in US Eastern, since
-#'   every World Cup venue is in North America. Other columns: `match_id`,
-#'   `matchday`, `stage`, `group`, `home_team_id`, `home_team`,
-#'   `away_team_id`, `away_team`, `status`, `score_display`,
+#'   (POSIXct, used for ordering); `match_date` (Date) and `kickoff`
+#'   (text, e.g. `"9:00 PM EDT"`) present the kickoff in `tz`. Other
+#'   columns: `match_id`, `matchday`, `stage`, `group`, `home_team_id`,
+#'   `home_team`, `away_team_id`, `away_team`, `status`, `score_display`,
 #'   `home_score`, `away_score`, `home_pk`, `away_pk`, `venue`.
 #' @export
 #' @examples
 #' \dontrun{
 #' all_matches()
+#' all_matches(tz = "America/Los_Angeles")
 #' }
-all_matches <- function() {
+all_matches <- function(tz = "America/New_York") {
+  validate_tz(tz)
   body <- fwc_get_cached(sprintf("competitions/%s/matches", wc_code()))
   matches <- body$matches %||% list()
   if (length(matches) == 0L) {
@@ -50,7 +55,7 @@ all_matches <- function() {
     utc_date = out$utc_date
   )
 
-  out <- add_eastern_cols(out)
+  out <- add_local_cols(out, tz)
   dplyr::arrange(out, .data$utc_date)
 }
 
@@ -58,9 +63,12 @@ all_matches <- function() {
 #'
 #' @param team A team name, short name, three-letter code, or alias
 #'   (e.g. `"USA"`, `"United States"`, `"Korea"`).
+#' @param tz A single time-zone name (see [OlsonNames()]) used for the
+#'   `match_date` and `kickoff` display columns. Defaults to
+#'   `"America/New_York"` (US Eastern).
 #' @return A tibble of matches involving that team, ordered by date. Times
-#'   are presented in US Eastern. Columns: `match_id`, `match_date` (Date,
-#'   ET), `kickoff_edt` (text, e.g. `"9:00 PM EDT"`), `stage`, `group`,
+#'   are presented in `tz`. Columns: `match_id`, `match_date` (Date),
+#'   `kickoff` (text, e.g. `"9:00 PM EDT"`), `stage`, `group`,
 #'   `home_team`, `away_team`, `status`, `score_display`, `venue`.
 #' @seealso [team_next_match()], [team_past_results()]
 #' @export
@@ -68,18 +76,19 @@ all_matches <- function() {
 #' \dontrun{
 #' team_schedule("USA")
 #' team_schedule("Brazil")
+#' team_schedule("USA", tz = "America/Los_Angeles")
 #' }
-team_schedule <- function(team) {
-  schedule_cols(team_matches(team))
+team_schedule <- function(team, tz = "America/New_York") {
+  schedule_cols(team_matches(team, tz))
 }
 
 #' All matches involving a team, with every column (including the raw
 #' `utc_date` instant the team-facing functions filter on).
 #' @noRd
-team_matches <- function(team) {
+team_matches <- function(team, tz = "America/New_York") {
   teams   <- list_teams()
   matched <- resolve_team(team, teams)
-  matches <- all_matches()
+  matches <- all_matches(tz)
 
   matches[
     matches$home_team_id %in% matched$id |
@@ -87,12 +96,12 @@ team_matches <- function(team) {
   ]
 }
 
-#' Select the Eastern-presentation columns shown to users (no raw `utc_date`).
+#' Select the local-time presentation columns shown to users (no raw `utc_date`).
 #' `any_of()` keeps this robust when a caller supplies a partial tibble.
 #' @noRd
 schedule_cols <- function(df) {
   dplyr::select(df, dplyr::any_of(c(
-    "match_id", "match_date", "kickoff_edt", "stage", "group",
+    "match_id", "match_date", "kickoff", "stage", "group",
     "home_team", "away_team", "status", "score_display", "venue"
   )))
 }
@@ -112,8 +121,8 @@ schedule_cols <- function(df) {
 #' \dontrun{
 #' team_next_match("Brazil")
 #' }
-team_next_match <- function(team, now = Sys.time()) {
-  sched <- team_matches(team)
+team_next_match <- function(team, now = Sys.time(), tz = "America/New_York") {
+  sched <- team_matches(team, tz)
   upcoming <- sched[
     !is.na(sched$utc_date) &
       (sched$utc_date >= now | sched$status %in% live_statuses()) &
@@ -139,8 +148,8 @@ team_next_match <- function(team, now = Sys.time()) {
 #' \dontrun{
 #' team_past_results("Argentina")
 #' }
-team_past_results <- function(team, now = Sys.time()) {
-  sched <- team_matches(team)
+team_past_results <- function(team, now = Sys.time(), tz = "America/New_York") {
+  sched <- team_matches(team, tz)
   past <- sched[
     !is.na(sched$utc_date) & sched$utc_date < now &
       !sched$status %in% live_statuses() &
@@ -155,25 +164,77 @@ parse_utc <- function(x) {
   as.POSIXct(x, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
 }
 
-#' Format a UTC POSIXct as a 12-hour US Eastern time string, e.g. "9:00 PM EDT".
-#'
-#' The World Cup runs entirely within Eastern Daylight Time, so the label is
-#' always EDT. `%I` zero-pads the hour ("09:00"); strip the leading zero.
+#' Validate a time-zone argument. Returns `tz` invisibly so it can be
+#' used inline; aborts with a clear message if it isn't a known zone.
 #' @noRd
-format_kickoff_edt <- function(x) {
-  t <- format(x, "%I:%M %p", tz = "America/New_York")
-  t <- sub("^0", "", t)
-  ifelse(is.na(x), NA_character_, paste0(t, " EDT"))
+validate_tz <- function(tz) {
+  if (!is.character(tz) || length(tz) != 1L || is.na(tz) || !tz %in% OlsonNames()) {
+    cli::cli_abort(c(
+      "{.arg tz} must be a single valid time-zone name.",
+      i = "See {.run OlsonNames()} for the full list (e.g. {.val America/New_York})."
+    ))
+  }
+  invisible(tz)
 }
 
-#' Add the Eastern presentation columns (`match_date`, `kickoff_edt`) just
+#' Short zone abbreviations for the 2026 tournament window.
+#'
+#' The World Cup runs entirely within one DST period (June 11 - July 19,
+#' 2026), so a static lookup is correct for the supported zones and avoids
+#' the platform-dependent `%Z` strftime code (which prints long names like
+#' "Eastern Daylight Time" on Windows).
+#' @noRd
+tz_abbr_2026 <- c(
+  "UTC"                 = "UTC",
+  "America/New_York"    = "EDT",
+  "America/Chicago"     = "CDT",
+  "America/Denver"      = "MDT",
+  "America/Los_Angeles" = "PDT",
+  "America/Mexico_City" = "CST",
+  "America/Sao_Paulo"   = "-03",
+  "Europe/London"       = "BST",
+  "Europe/Paris"        = "CEST",
+  "Europe/Athens"       = "EEST",
+  "Europe/Moscow"       = "MSK",
+  "Asia/Dubai"          = "+04",
+  "Asia/Kolkata"        = "IST",
+  "Asia/Tokyo"          = "JST",
+  "Asia/Shanghai"       = "CST",
+  "Australia/Sydney"    = "AEST",
+  "Pacific/Auckland"    = "NZST"
+)
+
+#' Short label for a zone, falling back to the OS `%Z` value for any zone
+#' not in the static table.
+#' @noRd
+tz_label <- function(x, tz) {
+  if (tz %in% names(tz_abbr_2026)) {
+    tz_abbr_2026[[tz]]
+  } else {
+    format(x, "%Z", tz = tz)
+  }
+}
+
+#' Format a UTC POSIXct as a 12-hour local time string, e.g. "9:00 PM EDT".
+#'
+#' `%I` zero-pads the hour ("09:00"); strip the leading zero. The zone label
+#' comes from [tz_label()].
+#' @noRd
+format_kickoff <- function(x, tz = "America/New_York") {
+  t <- format(x, "%I:%M %p", tz = tz)
+  t <- sub("^0", "", t)
+  label <- tz_label(x, tz)
+  ifelse(is.na(x), NA_character_, paste0(t, " ", label))
+}
+
+#' Add the local-time presentation columns (`match_date`, `kickoff`) just
 #' after `utc_date`. The instant in `utc_date` is unchanged.
 #' @noRd
-add_eastern_cols <- function(df) {
+add_local_cols <- function(df, tz = "America/New_York") {
   dplyr::mutate(
     df,
-    match_date  = as.Date(.data$utc_date, tz = "America/New_York"),
-    kickoff_edt = format_kickoff_edt(.data$utc_date),
+    match_date = as.Date(.data$utc_date, tz = tz),
+    kickoff    = format_kickoff(.data$utc_date, tz),
     .after = "utc_date"
   )
 }
@@ -194,7 +255,7 @@ empty_matches <- function() {
     match_id      = integer(),
     utc_date      = as.POSIXct(character(), tz = "UTC"),
     match_date    = as.Date(character()),
-    kickoff_edt   = character(),
+    kickoff       = character(),
     matchday      = integer(),
     stage         = character(),
     group         = character(),

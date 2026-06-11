@@ -57,14 +57,25 @@ team_schedule("us")
 Common aliases also work: `"Korea"` → South Korea, `"Czech Republic"` →
 Czechia, `"Cape Verde"` → Cape Verde Islands.
 
-## Times are US Eastern (EDT)
+## Times default to US Eastern (EDT)
 
-Every World Cup venue is in North America, so all dates and times are
-presented in US Eastern Time. `team_schedule()`, `team_next_match()`,
-`team_past_results()`, and `all_matches()` return a `match_date` (a `Date`
-in Eastern) and a human-readable `kickoff_edt` (e.g. `"9:00 PM EDT"`).
-`all_matches()` also keeps the raw `utc_date` (UTC `POSIXct`) for ordering
-or your own timezone conversions.
+Every World Cup venue is in North America, so dates and times default to
+US Eastern Time. `team_schedule()`, `team_next_match()`,
+`team_past_results()`, and `all_matches()` return a `match_date` (a `Date`)
+and a human-readable `kickoff` (e.g. `"9:00 PM EDT"`). `all_matches()`
+also keeps the raw `utc_date` (UTC `POSIXct`) for ordering.
+
+Pass a `tz` argument (any name from `OlsonNames()`) to see another zone —
+`match_date` and `kickoff` are recomputed and the label changes to match:
+
+``` r
+team_schedule("USA")                              # 9:00 PM EDT
+team_schedule("USA", tz = "America/Los_Angeles")  # 6:00 PM PDT
+team_schedule("USA", tz = "Europe/London")        # next-day BST
+```
+
+The companion Quarto site has a time-zone picker that does the same thing
+for visitors, defaulting to their browser's local zone.
 
 ## Score display
 
@@ -215,10 +226,10 @@ The data refreshes on the same hourly schedule as the site (match window
 only — 15:00–06:00 UTC). The `is_today`, `is_upcoming`, and `is_finished`
 flags are computed as of the `generated_utc` time in `metadata.json`;
 recompute them from `utc_date` / `match_date` if you need them relative to a
-different moment. `match_date` and `kickoff_edt` are in US Eastern (EDT) —
+different moment. `match_date` and `kickoff` are in US Eastern (EDT) —
 every World Cup venue is in North America — while `utc_date` is the raw UTC
-kickoff instant; scores are subject to the free tier's delay (see
-[Score display](#score-display)).
+kickoff instant you can convert to any zone yourself; scores are subject to
+the free tier's delay (see [Score display](#score-display)).
 
 The files are produced by `data-raw/publish_data.R`, run as a step in
 `.github/workflows/publish.yml`.

@@ -18,9 +18,9 @@ matches <- all_matches()
 # and re-construct Date objects on the JS side.
 matches_for_js <- matches |>
   mutate(utc_date_str = format(utc_date, "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")) |>
-  # The JS does its own EDT formatting from utc_date_str; drop the R-side
-  # datetime/Eastern columns so a Date doesn't round-trip through ojs_define().
-  select(-utc_date, -match_date, -kickoff_edt)
+  # The JS does its own timezone formatting from utc_date_str; drop the R-side
+  # datetime/local columns so a Date doesn't round-trip through ojs_define().
+  select(-utc_date, -match_date, -kickoff)
 
 ojs_define(
   teams_data    = teams,
@@ -41,8 +41,6 @@ is available.
 *Last rebuilt: `r format(Sys.time(), "%B %e, %Y at %H:%M EDT", tz = "America/New_York")`*
 :::
 
-*All times shown in US Eastern Time (EDT).*
-
 ```{ojs}
 //| echo: false
 teams   = transpose(teams_data).sort((a, b) => a.name.localeCompare(b.name))
@@ -51,6 +49,38 @@ matches = transpose(matches_data)
   .sort((a, b) => a.utc_date - b.utc_date)
 now = new Date()
 ```
+
+```{ojs}
+//| echo: false
+// One time-zone selector drives both tabs. Default to the visitor's own
+// zone (detected from the browser); the dropdown also offers major world
+// zones. A Map keeps the friendly label separate from the IANA value.
+localTz = Intl.DateTimeFormat().resolvedOptions().timeZone
+tzOptions = new Map([
+  [`Your local time (${localTz})`, localTz],
+  ["UTC", "UTC"],
+  ["US Eastern",  "America/New_York"],
+  ["US Central",  "America/Chicago"],
+  ["US Mountain", "America/Denver"],
+  ["US Pacific",  "America/Los_Angeles"],
+  ["Mexico City", "America/Mexico_City"],
+  ["São Paulo",   "America/Sao_Paulo"],
+  ["London",      "Europe/London"],
+  ["Central Europe (Paris/Berlin/Madrid)", "Europe/Paris"],
+  ["Athens / Cairo", "Europe/Athens"],
+  ["Moscow",      "Europe/Moscow"],
+  ["Dubai",       "Asia/Dubai"],
+  ["India",       "Asia/Kolkata"],
+  ["Tokyo / Seoul", "Asia/Tokyo"],
+  ["Beijing / Singapore", "Asia/Shanghai"],
+  ["Sydney",      "Australia/Sydney"],
+  ["Auckland",    "Pacific/Auckland"]
+])
+viewof selectedTz = Inputs.select(tzOptions, {label: "Time zone", value: localTz})
+tz = selectedTz
+```
+
+*Pick your time zone above — both tabs update. (Defaults to your device's time zone.)*
 
 ::: {.panel-tabset}
 
@@ -129,7 +159,7 @@ pastMatches.length > 0
 //| echo: false
 matchesByDay = d3.groups(
   matches,
-  m => nyDayKey(m.utc_date)
+  m => dayKey(m.utc_date)
 ).sort(([a], [b]) => a.localeCompare(b))
 ```
 
@@ -192,26 +222,28 @@ function stageLabel(stage, group) {
     .replace(/\b\w/g, c => c.toUpperCase());
 }
 
-// All times are shown in US Eastern (EDT); the World Cup runs entirely within
-// EDT and every venue is in North America.
-nyDayFmt = new Intl.DateTimeFormat("en-CA", {timeZone: "America/New_York"})
-function nyDayKey(d) { return nyDayFmt.format(d); }   // "2026-06-12" in Eastern
+// All times follow the selected `tz` (see the time-zone picker). Building a
+// fresh formatter per call keeps things reactive when `tz` changes.
+function dayKey(d) {
+  // e.g. "2026-06-12" — the calendar date in the selected zone.
+  return new Intl.DateTimeFormat("en-CA", {timeZone: tz}).format(d);
+}
 
 function formatDate(d) {
   return d.toLocaleString("en-US", {
     weekday: "long", month: "long", day: "numeric", year: "numeric",
-    hour: "numeric", minute: "2-digit", timeZone: "America/New_York"
-  }) + " EDT";
+    hour: "numeric", minute: "2-digit", timeZone: tz, timeZoneName: "short"
+  });
 }
 function formatDateShort(d) {
-  return d.toLocaleDateString("en-US", {weekday: "short", month: "short", day: "numeric", timeZone: "America/New_York"});
+  return d.toLocaleDateString("en-US", {weekday: "short", month: "short", day: "numeric", timeZone: tz});
 }
 function formatTime(d) {
-  return d.toLocaleTimeString("en-US", {hour: "numeric", minute: "2-digit", timeZone: "America/New_York"}) + " EDT";
+  return d.toLocaleTimeString("en-US", {hour: "numeric", minute: "2-digit", timeZone: tz, timeZoneName: "short"});
 }
 function formatDayHeading(isoDay) {
-  // isoDay is already the Eastern calendar date; format it as UTC midday so the
-  // weekday/month/day read back out without a second timezone shift.
+  // isoDay is already the selected-zone calendar date; format it as UTC midday
+  // so the weekday/month/day read back out without a second timezone shift.
   const d = new Date(isoDay + "T12:00:00Z");
   return d.toLocaleDateString("en-US", {weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC"});
 }

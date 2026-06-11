@@ -44,6 +44,27 @@ test_that("team_schedule() works with the canonical name, an alias, and a TLA", 
   expect_identical(by_name$match_id, by_tla$match_id)
 })
 
+test_that("team_schedule() presents kickoff in the requested time zone", {
+  use_fixtures()
+  default_tz <- team_schedule("USA")
+  pacific    <- team_schedule("USA", tz = "America/Los_Angeles")
+
+  expect_true("kickoff" %in% names(default_tz))
+  expect_false("kickoff_edt" %in% names(default_tz))
+  expect_false("utc_date" %in% names(default_tz))
+
+  expect_true(all(grepl("EDT$", default_tz$kickoff)))
+  expect_true(all(grepl("PDT$", pacific$kickoff)))
+
+  # Same matches, just relabelled — match_id ordering is unchanged.
+  expect_identical(default_tz$match_id, pacific$match_id)
+})
+
+test_that("team_schedule() rejects an invalid time zone", {
+  use_fixtures()
+  expect_error(team_schedule("USA", tz = "Mars/Phobos"), "time-zone")
+})
+
 test_that("team_next_match() uses the supplied reference time", {
   use_fixtures()
   nxt <- team_next_match(
@@ -93,7 +114,7 @@ test_that("live matches are upcoming rather than past results", {
     venue = NA_character_
   )
   testthat::local_mocked_bindings(
-    team_matches = function(team) {
+    team_matches = function(team, tz = "America/New_York") {
       if (team == "inactive") schedule[-1, ] else schedule
     },
     .package = "worldcup26"

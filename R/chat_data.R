@@ -30,8 +30,8 @@ chat_data <- function(
 
   out <- matches |>
     # Present dates and times in US Eastern (every venue is in North America);
-    # adds `match_date` and `kickoff_edt` consistent with the rest of the package.
-    add_eastern_cols() |>
+    # adds `match_date` and `kickoff` consistent with the rest of the package.
+    add_local_cols() |>
     dplyr::mutate(
       home_tla = unname(tla_by_id[as.character(.data$home_team_id)]),
       away_tla = unname(tla_by_id[as.character(.data$away_team_id)]),
@@ -52,7 +52,7 @@ chat_data <- function(
       "match_id",
       "utc_date",
       "match_date",
-      "kickoff_edt",
+      "kickoff",
       "matchday",
       "stage",
       "stage_label",

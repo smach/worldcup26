@@ -1,3 +1,19 @@
+# worldcup26 0.4.0
+
+* Time zones are now selectable. `team_schedule()`, `team_next_match()`,
+  `team_past_results()`, and `all_matches()` gain a `tz` argument (any name
+  from `OlsonNames()`, default `"America/New_York"`); `match_date` and the
+  kickoff time are recomputed for that zone. The companion Quarto site adds a
+  single time-zone picker that drives both tabs and defaults to the visitor's
+  own browser zone.
+* **Breaking:** the `kickoff_edt` column is renamed to `kickoff`, since the
+  value now carries whatever zone you asked for (e.g. `"6:00 PM PDT"`). This
+  affects `team_schedule()` and friends, `all_matches()`, `chat_data()`, and
+  the published `chat_data.json`/`.csv` files. The chat dashboard still
+  presents Eastern times.
+
+  _[This update was written by Claude]_
+
 # worldcup26 0.3.0
 
 * All dates and times are now presented in US Eastern (EDT) across the whole

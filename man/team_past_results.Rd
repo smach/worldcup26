@@ -4,7 +4,7 @@
 \alias{team_past_results}
 \title{A team's past results}
 \usage{
-team_past_results(team, now = Sys.time())
+team_past_results(team, now = Sys.time(), tz = "America/New_York")
 }
 \arguments{
 \item{team}{A team name, short name, three-letter code, or alias
@@ -12,6 +12,10 @@ team_past_results(team, now = Sys.time())
 
 \item{now}{The reference time used to determine whether a match is in
 the past. Defaults to \code{\link[=Sys.time]{Sys.time()}}.}
+
+\item{tz}{A single time-zone name (see \code{\link[=OlsonNames]{OlsonNames()}}) used for the
+\code{match_date} and \code{kickoff} display columns. Defaults to
+\code{"America/New_York"} (US Eastern).}
 }
 \value{
 A tibble in the same shape as \code{\link[=team_schedule]{team_schedule()}}, ordered with

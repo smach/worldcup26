@@ -99,7 +99,7 @@ chat_data_description <- function() {
     "  ordering matches chronologically, not for display.",
     "- `match_date` (date): the kickoff date in US Eastern (EDT). Use this",
     "  column for date-based queries like \"matches on June 15\".",
-    "- `kickoff_edt` (text): kickoff time formatted as `9:00 PM EDT`",
+    "- `kickoff` (text): kickoff time formatted as `9:00 PM EDT`",
     "  (12-hour, US Eastern).",
     "- `matchday` (integer): the round within the group stage (1, 2, or 3);",
     "  NULL for knockout matches.",
@@ -159,7 +159,7 @@ chat_extra_instructions <- function(today = eastern_today()) {
     "score. Do **not** invent scores \u2014 if `home_score` and `away_score`",
     "are NULL, the score is not yet available.",
     "",
-    "All match times are presented in US Eastern (EDT) — see `kickoff_edt`",
+    "All match times are presented in US Eastern (EDT) — see `kickoff`",
     "and `match_date` — because every World Cup venue is in North America.",
     "When you mention a kickoff time, give it in EDT and label it as such.",
     sep = "\n"
