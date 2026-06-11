@@ -22,6 +22,8 @@ matches_for_js <- matches |>
   # datetime/local columns so a Date doesn't round-trip through ojs_define().
   select(-utc_date, -match_date, -kickoff)
 
+live <- worldcup26:::live_mode()
+
 ojs_define(
   teams_data    = teams,
   matches_data  = matches_for_js,
@@ -29,17 +31,36 @@ ojs_define(
 )
 ```
 
-::: {.callout-warning appearance="simple"}
+```{r data-note}
+#| echo: false
+#| results: asis
+rebuilt <- format(Sys.time(), "%B %e, %Y at %H:%M EDT", tz = "America/New_York")
+if (live) {
+  cat(sprintf(
+    '::: {.callout-note appearance="simple"}
+This page rebuilds about every 10 minutes during match windows, with live
+scores from [football-data.org](https://www.football-data.org/)\'s paid API
+tier. An in-progress match shows a running scoreline (e.g. *"1–0 (live)"*).
+Because the page is a periodic snapshot, the scoreline can trail the live match
+by a few minutes.
+
+*Last rebuilt: %s*
+:::', rebuilt))
+} else {
+  cat(sprintf(
+    '::: {.callout-warning appearance="simple"}
 This data is updated hourly from
-[football-data.org](https://www.football-data.org/)'s free-tier API when
+[football-data.org](https://www.football-data.org/)\'s free-tier API when
 matches are played. The free tier provides delayed scores, not live
 in-match scores. During a match, this page may show the match as
 *"in progress"* without a current score; shortly after full time, it may
 temporarily show *"no score available yet"* until the delayed score data
 is available.
 
-*Last rebuilt: `r format(Sys.time(), "%B %e, %Y at %H:%M EDT", tz = "America/New_York")`*
-:::
+*Last rebuilt: %s*
+:::', rebuilt))
+}
+```
 
 ```{ojs}
 //| echo: false

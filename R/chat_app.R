@@ -64,21 +64,33 @@ worldcup26_chat <- function(data    = chat_data(),
 #' Default greeting displayed when the chat first opens.
 #' @noRd
 chat_default_greeting <- function() {
+  tier_note <- if (live_mode()) {
+    c(
+      "During an in-progress match the score column shows the running",
+      "scoreline (e.g. *\"1\u20130 (live)\"*) from the paid live-scores tier."
+    )
+  } else {
+    c(
+      "During an in-progress match the score column may read *\"in progress\"*",
+      "because the dashboard uses the free API tier \u2014 check back after the",
+      "final whistle."
+    )
+  }
   paste(
-    "Welcome! Ask me anything about the 2026 FIFA Men's World Cup",
-    "schedule and results. Some questions you can try:",
-    "",
-    "- *When is Canada's next game?*",
-    "- *Show me all matches on June 15.*",
-    "- *Which teams are in Group D?*",
-    "- *List the round of 16 matches.*",
-    "- *Has Brazil played yet?*",
-    "",
-    "Data comes from [football-data.org](https://www.football-data.org/).",
-    "During an in-progress match the score column may read *\"in progress\"*",
-    "because the dashboard uses the free API tier \u2014 check back after the",
-    "final whistle.",
-    sep = "\n"
+    c(
+      "Welcome! Ask me anything about the 2026 FIFA Men's World Cup",
+      "schedule and results. Some questions you can try:",
+      "",
+      "- *When is Canada's next game?*",
+      "- *Show me all matches on June 15.*",
+      "- *Which teams are in Group D?*",
+      "- *List the round of 16 matches.*",
+      "- *Has Brazil played yet?*",
+      "",
+      "Data comes from [football-data.org](https://www.football-data.org/).",
+      tier_note
+    ),
+    collapse = "\n"
   )
 }
 
@@ -117,8 +129,9 @@ chat_data_description <- function() {
     "  `PAUSED`, `EXTRA_TIME`, `PENALTY_SHOOTOUT`, `FINISHED`, `AWARDED`,",
     "  `POSTPONED`, `SUSPENDED`, `CANCELLED`.",
     "- `score_display` (text): the score formatted for humans, e.g. `'2-1'`,",
-    "  or `'in progress'`, or `'no score available yet'`. Empty string when",
-    "  the match has not been played.",
+    "  or `'in progress'` (or `'1-0 (live)'` on the paid live-scores tier),",
+    "  or `'no score available yet'`. Empty string when the match has not",
+    "  been played.",
     "- `home_score`, `away_score` (integer): full-time goals; NULL if not",
     "  yet recorded.",
     "- `home_pk`, `away_pk` (integer): penalty shoot-out goals; NULL when",

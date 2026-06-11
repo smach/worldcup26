@@ -120,10 +120,11 @@ chat_data()
 | Situation                               | Value                                     |
 |-----------------------------------------|-------------------------------------------|
 | Match yet to start                      | `""`                                      |
-| Match in progress                       | `"in progress"`                           |
+| Match in progress (free tier)           | `"in progress"`                           |
+| Match in progress (live mode)           | e.g. `"1–0 (live)"`                        |
 | Recently completed, no score posted yet | `"no score available yet"`                |
 | Completed match                         | e.g. `"2–1"`                         |
 | Knockout decided on penalties           | e.g. `"1–1 (4–3 PK)"`           |
 | Postponed / cancelled / suspended       | `"postponed"`, `"cancelled"`, `"suspended"` |
 
-The free football-data.org tier does not surface live in-match scores. If you need real-time scoreline updates, pair `worldcup26` with another source for matches that are currently underway.
+By default `worldcup26` uses football-data.org's free tier, which does not surface live in-match scores, so an in-progress match reads `"in progress"`. If you have a paid key (the €12/mo "Free w/ Livescores" tier is enough), set the `WORLDCUP26_LIVE` environment variable to `"true"` (or `options(worldcup26.live = TRUE)`) to get running scorelines like `"1–0 (live)"` and a shorter cache. See the README's "Live scores" section for details.
