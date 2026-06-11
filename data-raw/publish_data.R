@@ -46,9 +46,14 @@ utils::write.csv(teams, file.path(out_dir, "teams.csv"),     row.names = FALSE, 
 
 # Machine-readable manifest. The is_* flags are computed as of generated_utc;
 # recompute from utc_date / match_date if you need them relative to another time.
+tier_note <- if (worldcup26:::live_mode()) {
+  "paid tier, live scores"
+} else {
+  "free tier, delayed scores"
+}
 meta <- list(
   generated_utc = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"),
-  source        = "https://www.football-data.org/ (free tier, delayed scores)",
+  source        = sprintf("https://www.football-data.org/ (%s)", tier_note),
   note = paste(
     "is_today, is_upcoming and is_finished are computed as of generated_utc (UTC).",
     "Recompute from utc_date / match_date if you need them relative to another time."

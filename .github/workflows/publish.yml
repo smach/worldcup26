@@ -15,8 +15,16 @@ jobs:
   render:
     runs-on: ubuntu-latest
 
+    # The hourly tick and manual/push runs always proceed; the 10-min tick
+    # only proceeds when the repo variable WORLDCUP26_LIVE is "true".
+    if: >
+      github.event_name != 'schedule' ||
+      github.event.schedule == '0 0-6,15-23 * * *' ||
+      vars.WORLDCUP26_LIVE == 'true'
+
     env:
       FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+      WORLDCUP26_LIVE: ${{ vars.WORLDCUP26_LIVE }}
 
     steps:
       - name: Checkout

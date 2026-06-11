@@ -2,7 +2,8 @@
 #'
 #' Populated lazily on first use via [memoise::memoise()] backed by
 #' [cachem::cache_disk()]. TTL is configurable via the
-#' `worldcup26.cache_ttl` option (seconds, default 1 hour).
+#' `worldcup26.cache_ttl` option (seconds); the default is 1 hour on the
+#' free tier and 60 seconds in live mode (see [live_mode()]).
 #' @noRd
 .cache_state <- new.env(parent = emptyenv())
 
@@ -12,7 +13,8 @@ memoised_fwc_get <- function() {
   if (!is.null(.cache_state$fn)) {
     return(.cache_state$fn)
   }
-  ttl <- getOption("worldcup26.cache_ttl", 3600)
+  # Live mode needs near-fresh data; the explicit option still wins.
+  ttl <- getOption("worldcup26.cache_ttl", if (live_mode()) 60 else 3600)
   dir <- getOption(
     "worldcup26.cache_dir",
     tools::R_user_dir("worldcup26", which = "cache")

@@ -85,19 +85,60 @@ Match scores are reported in a single `score_display` column:
 | Situation                               | Value                      |
 |-----------------------------------------|----------------------------|
 | Match yet to start                      | `""`                       |
-| Match in progress                       | `"in progress"`            |
+| Match in progress (free tier)           | `"in progress"`            |
+| Match in progress (live mode)           | e.g. `"1-0 (live)"`        |
 | Recently completed, no score posted yet | `"no score available yet"` |
 | Completed match with score              | e.g. `"2–1"`               |
 | Knockout decided on penalties           | e.g. `"1–1 (4–3 PK)"`      |
 | Postponed / cancelled / suspended       | `"postponed"`, etc.        |
 
-The free football-data.org tier doesn’t expose up-to-the-minute scores, so
-during a match you may see `"in progress"`. Use a faster source if you
-need a live scoreline.
+By default the package uses football-data.org’s free tier, which doesn’t
+expose up-to-the-minute scores, so during a match you’ll see
+`"in progress"`. To get running scorelines instead, enable **live mode**
+(see below).
+
+## Live scores (optional paid tier)
+
+The free tier only returns *delayed* scores. If you want live in-match
+scorelines, football-data.org’s paid tiers use the **same API** — the
+cheapest one that includes live scores is the **“Free w/ Livescores”**
+tier (€12/month), and it covers the World Cup. No code changes are needed;
+you just turn live mode on.
+
+Set the `WORLDCUP26_LIVE` environment variable in your `~/.Renviron`
+(alongside your paid `FOOTBALL_DATA_API_KEY`):
+
+    WORLDCUP26_LIVE=true
+
+Restart R. (For a single session you can instead use
+`options(worldcup26.live = TRUE)`, which overrides the env var.)
+
+With live mode on:
+
+- In-progress matches show a running scoreline, e.g. `"1-0 (live)"`,
+  instead of `"in progress"`.
+- The on-disk cache TTL drops to 60 seconds (from 1 hour) so data stays
+  fresh; the chat dashboard and direct function calls are then genuinely
+  live.
+- The chat greeting and the Quarto site’s banner switch to live wording.
+
+For the **public Quarto site**, also:
+
+1.  Put the paid key in the `FOOTBALL_DATA_API_KEY` repository *secret*.
+2.  Add a repository *variable* `WORLDCUP26_LIVE` set to `true`
+    (Settings → Secrets and variables → Actions → Variables).
+
+That activates a second cron in `.github/workflows/publish.yml` that
+rebuilds the site about every 10 minutes during match windows. Note the
+static page is only *near*-live (GitHub’s scheduler runs on ~5-minute
+granularity and is often delayed); the live R functions and chat app,
+which hit the API directly, are truly live. Unset the variable to return
+the site to the free-tier hourly rebuild.
 
 ## Caching
 
-API responses are cached to disk for one hour by default. Override with:
+API responses are cached to disk for one hour by default (60 seconds in
+live mode). Override with:
 
 ``` r
 options(worldcup26.cache_ttl = 600)  # 10 minutes
@@ -187,8 +228,9 @@ The GitHub Actions workflow rebuilds the site hourly during the match
 window (15:00–06:00 UTC) and skips the quiet hours (07:00–14:00 UTC /
 3–10 AM ET). Adjust the cron expression in
 `.github/workflows/publish.yml` if you want a different cadence. A
-prominent banner on the page tells visitors that live in-match scores
-are not available on the free API tier.
+prominent banner on the page tells visitors whether scores are delayed
+(free tier) or live; see [Live scores](#live-scores-optional-paid-tier)
+to switch the site to the paid tier and a ~10-minute rebuild.
 
 ## Downloadable data
 

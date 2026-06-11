@@ -1,12 +1,15 @@
-# Reach the internal score_display() helper via :::.
+# Reach the internal score_display() helper via :::. `live` defaults to
+# FALSE so the existing free-tier expectations don't depend on the
+# WORLDCUP26_LIVE env var of whatever machine runs the tests.
 sd <- function(status, home = NA_integer_, away = NA_integer_,
                pk_home = NA_integer_, pk_away = NA_integer_,
                utc_date = as.POSIXct("2026-06-15", tz = "UTC"),
-               now = as.POSIXct("2026-06-20", tz = "UTC")) {
+               now = as.POSIXct("2026-06-20", tz = "UTC"),
+               live = FALSE) {
   worldcup26:::score_display(
     status = status, home = home, away = away,
     pk_home = pk_home, pk_away = pk_away,
-    utc_date = utc_date, now = now
+    utc_date = utc_date, now = now, live = live
   )
 }
 
@@ -25,11 +28,32 @@ test_that("Penalty shoot-out result is appended", {
   )
 })
 
-test_that("Live statuses report 'in progress'", {
+test_that("Live statuses report 'in progress' on the free tier", {
   expect_equal(sd("IN_PLAY"), "in progress")
   expect_equal(sd("PAUSED"), "in progress")
   expect_equal(sd("EXTRA_TIME"), "in progress")
   expect_equal(sd("PENALTY_SHOOTOUT"), "in progress")
+})
+
+test_that("Live mode shows a running scoreline when a score is present", {
+  expect_equal(sd("IN_PLAY", 1L, 0L, live = TRUE), "1–0 (live)")
+  expect_equal(sd("PAUSED", 2L, 2L, live = TRUE), "2–2 (live)")
+})
+
+test_that("Live mode falls back to 'in progress' before the first goal", {
+  expect_equal(sd("IN_PLAY", live = TRUE), "in progress")
+})
+
+test_that("score_display() defaults the live flag from live_mode()", {
+  withr::local_options(worldcup26.live = TRUE)
+  expect_equal(
+    worldcup26:::score_display(
+      "IN_PLAY", 3L, 1L, NA_integer_, NA_integer_,
+      utc_date = as.POSIXct("2026-06-15", tz = "UTC"),
+      now = as.POSIXct("2026-06-15 01:00", tz = "UTC")
+    ),
+    "3–1 (live)"
+  )
 })
 
 test_that("SCHEDULED in the future is blank, in the past is 'no score available yet'", {
