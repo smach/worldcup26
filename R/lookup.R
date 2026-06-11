@@ -16,7 +16,7 @@ normalise_name <- function(x) {
 #' 2. Alias-table mapping, then exact match again.
 #' 3. Substring match against `name` / `short_name` (must be unique).
 #'
-#' @param team A character scalar — team name, short name, three-letter
+#' @param team A character scalar -- team name, short name, three-letter
 #'   code, or common alias (e.g. `"USA"`).
 #' @param teams A teams tibble as returned by [list_teams()]. When `NULL`
 #'   (the default), teams are fetched.

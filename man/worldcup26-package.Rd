@@ -12,14 +12,14 @@ functions:
 }
 \details{
 \itemize{
-\item \code{\link[=list_teams]{list_teams()}} — every team competing in the tournament
-\item \code{\link[=team_schedule]{team_schedule()}} — a team's full schedule
-\item \code{\link[=team_next_match]{team_next_match()}} — a team's next upcoming match
-\item \code{\link[=team_past_results]{team_past_results()}} — a team's matches that have already occurred
-\item \code{\link[=all_matches]{all_matches()}} — every World Cup match in one tibble
-\item \code{\link[=chat_data]{chat_data()}} — flat matches table used by the chat dashboard
-\item \code{\link[=worldcup26_chat]{worldcup26_chat()}} — natural-language chat dashboard
-\item \code{\link[=clear_cache]{clear_cache()}} — drop cached API responses
+\item \code{\link[=list_teams]{list_teams()}} -- every team competing in the tournament
+\item \code{\link[=team_schedule]{team_schedule()}} -- a team's full schedule
+\item \code{\link[=team_next_match]{team_next_match()}} -- a team's next upcoming match
+\item \code{\link[=team_past_results]{team_past_results()}} -- a team's matches that have already occurred
+\item \code{\link[=all_matches]{all_matches()}} -- every World Cup match in one tibble
+\item \code{\link[=chat_data]{chat_data()}} -- flat matches table used by the chat dashboard
+\item \code{\link[=worldcup26_chat]{worldcup26_chat()}} -- natural-language chat dashboard
+\item \code{\link[=clear_cache]{clear_cache()}} -- drop cached API responses
 }
 
 Set your API key in the \code{FOOTBALL_DATA_API_KEY} environment variable

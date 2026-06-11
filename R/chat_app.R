@@ -172,8 +172,8 @@ chat_extra_instructions <- function(today = eastern_today()) {
     "score. Do **not** invent scores \u2014 if `home_score` and `away_score`",
     "are NULL, the score is not yet available.",
     "",
-    "All match times are presented in US Eastern (EDT) — see `kickoff`",
-    "and `match_date` — because every World Cup venue is in North America.",
+    "All match times are presented in US Eastern (EDT) \u2014 see `kickoff`",
+    "and `match_date` \u2014 because every World Cup venue is in North America.",
     "When you mention a kickoff time, give it in EDT and label it as such.",
     sep = "\n"
   ),
