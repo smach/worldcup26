@@ -21,7 +21,7 @@
     "away_pk": null,
     "is_finished": true,
     "is_upcoming": false,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -38,15 +38,15 @@
     "home_tla": "KOR",
     "away_team": "Czechia",
     "away_tla": "CZE",
-    "status": "IN_PLAY",
-    "score_display": "2–1 (live)",
+    "status": "FINISHED",
+    "score_display": "2–1",
     "home_score": 2,
     "away_score": 1,
     "home_pk": null,
     "away_pk": null,
-    "is_finished": false,
-    "is_upcoming": true,
-    "is_today": true,
+    "is_finished": true,
+    "is_upcoming": false,
+    "is_today": false,
     "venue": null
   },
   {
@@ -71,7 +71,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -96,7 +96,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
