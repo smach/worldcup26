@@ -1,3 +1,20 @@
+# worldcup26 0.5.0
+
+* The "By team" tab on the companion Quarto site now shows scores from the
+  selected team's perspective. Previously the score column was always rendered
+  in home–away order, so a 2–0 win by the home side looked identical on both
+  team pages and you couldn't tell who won. The team's goals are now listed
+  first (e.g. Mexico's page shows `2–0`, South Africa's shows `0–2` for the
+  same match).
+* Added an optional paid-tier "live scores" mode. Set the `WORLDCUP26_LIVE`
+  environment variable (to `"true"`, `"1"`, `"yes"`, or `"on"`) along with a
+  paid `FOOTBALL_DATA_API_KEY` to opt in. Live mode uses a short cache TTL and
+  shows running scorelines for in-play matches (e.g. `"1–0 (live)"`) on the
+  site and in the chat. The default remains the free tier, which returns
+  delayed scores and shows in-progress matches as `"in progress"`.
+
+  _[This update was written by Claude]_
+
 # worldcup26 0.4.0
 
 * Time zones are now selectable. `team_schedule()`, `team_next_match()`,
