@@ -1,3 +1,16 @@
+# worldcup26 0.5.1
+
+* Bug fix: the publish workflow's schedule didn't match its documented
+  behavior. It defined only a single 12-minute cron, while the job's `if`
+  condition gated on an hourly cron string (`"0 0-6,15-23 * * *"`) that was
+  never registered. As a result the hourly fallback never matched, so when
+  `WORLDCUP26_LIVE` was `false` the site stopped rebuilding entirely instead of
+  refreshing once an hour. The workflow now registers two crons: an hourly tick
+  that always runs, and a 10-minute tick (`:10`-`:50`) that runs only when
+  `WORLDCUP26_LIVE` is `true`.
+
+  _[This update was written by Claude]_
+
 # worldcup26 0.5.0
 
 * The "By team" tab on the companion Quarto site now shows scores from the
