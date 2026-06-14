@@ -3,6 +3,10 @@ project:
   output-dir: docs
   render:
     - index.qmd
+  # Ship the client-side helper module so the OJS `import` resolves on the
+  # published site (used by the optional "Update scores" button).
+  resources:
+    - live-scores.js
   preview:
     port: 4321
 

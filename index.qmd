@@ -24,10 +24,17 @@ matches_for_js <- matches |>
 
 live <- worldcup26:::live_mode()
 
+# Optional client-side live-score overlay. When WORLDCUP26_SCORE_PROXY_URL is
+# set (to a deployed Cloudflare Worker; see worker/README.md), the page shows an
+# "Update scores" button that fetches current scores without an Action rebuild.
+# Unset -> empty string -> no button, and the page behaves exactly as before.
+score_proxy_url <- Sys.getenv("WORLDCUP26_SCORE_PROXY_URL", "")
+
 ojs_define(
-  teams_data    = teams,
-  matches_data  = matches_for_js,
-  last_updated  = format(Sys.time(), "%Y-%m-%d %H:%M EDT", tz = "America/New_York")
+  teams_data      = teams,
+  matches_data    = matches_for_js,
+  score_proxy_url = score_proxy_url,
+  last_updated    = format(Sys.time(), "%Y-%m-%d %H:%M EDT", tz = "America/New_York")
 )
 ```
 
@@ -64,11 +71,29 @@ is available.
 
 ```{ojs}
 //| echo: false
+import {computeScoreDisplay, mergeLiveScores} from "./live-scores.js"
+
 teams   = transpose(teams_data).sort((a, b) => a.name.localeCompare(b.name))
-matches = transpose(matches_data)
+
+// Build-time snapshot from R. The optional "Update scores" button overlays
+// fresh scores onto this via `liveEntries` (see below); when the button isn't
+// used (or isn't configured) `matches === baseMatches`.
+baseMatches = transpose(matches_data)
   .map(d => ({...d, utc_date: new Date(d.utc_date_str)}))
   .sort((a, b) => a.utc_date - b.utc_date)
+
 now = new Date()
+
+// Public proxy URL injected at render time (empty when the feature is off).
+WORKER_URL = (typeof score_proxy_url === "string" ? score_proxy_url : "").trim()
+
+// Live overlay, set by the button. Empty by default, so `matches` matches the
+// build-time snapshot until the visitor asks for an update.
+mutable liveEntries = []
+
+matches = mergeLiveScores(baseMatches, liveEntries, now)
+  .slice()
+  .sort((a, b) => a.utc_date - b.utc_date)
 ```
 
 ```{ojs}
@@ -102,6 +127,41 @@ tz = selectedTz
 ```
 
 *Pick your time zone above — both tabs update. (Defaults to your device's time zone.)*
+
+```{ojs}
+//| echo: false
+// "Update scores" button — only rendered when a proxy URL was configured at
+// render time (WORLDCUP26_SCORE_PROXY_URL). It fetches current scores from the
+// Cloudflare Worker (which keeps the API key secret) and overlays them onto the
+// page via `liveEntries`, no site rebuild needed. Returns null (renders
+// nothing) when the feature is off.
+updateBar = {
+  if (!WORKER_URL) return null;
+
+  const status = html`<span class="update-status"></span>`;
+  const btn = html`<button class="update-btn" type="button">Update scores</button>`;
+
+  btn.onclick = async () => {
+    btn.disabled = true;
+    status.classList.remove("error");
+    status.textContent = "Updating…";
+    try {
+      const resp = await fetch(WORKER_URL, {headers: {Accept: "application/json"}});
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      mutable liveEntries = Array.isArray(data.matches) ? data.matches : [];
+      status.textContent = `Updated ${new Date().toLocaleTimeString()}`;
+    } catch (err) {
+      status.classList.add("error");
+      status.textContent = "Couldn't reach live scores — try again.";
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  return html`<div class="update-bar">${btn}${status}</div>`;
+}
+```
 
 ::: {.panel-tabset}
 

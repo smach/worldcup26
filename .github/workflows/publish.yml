@@ -28,6 +28,10 @@ jobs:
     env:
       FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
       WORLDCUP26_LIVE: ${{ vars.WORLDCUP26_LIVE }}
+      # Optional: set this repo variable to a deployed Cloudflare Worker URL to
+      # render the client-side "Update scores" button (see worker/README.md).
+      # Leave it unset to keep the button off; the site is unaffected.
+      WORLDCUP26_SCORE_PROXY_URL: ${{ vars.WORLDCUP26_SCORE_PROXY_URL }}
 
     steps:
       - name: Checkout

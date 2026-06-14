@@ -1,0 +1,18 @@
+# Cloudflare Worker config for the worldcup26 live-score proxy.
+#
+# The API key is NOT here — it's a Cloudflare *secret*:
+#   wrangler secret put FOOTBALL_DATA_API_KEY
+#
+# Everything in [vars] is public (it ships in the Worker), so keep secrets out.
+
+name = "worldcup26-scores"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+# Page origins allowed to call this proxy (comma-separated). Add your own
+# GitHub Pages origin and keep localhost for `quarto preview`.
+ALLOWED_ORIGINS = "https://smach.github.io,http://localhost:4321,http://127.0.0.1:4321"
+# Edge + browser cache lifetime, seconds. Many clicks in this window share one
+# upstream API call, protecting the football-data.org rate limit.
+CACHE_TTL_SECONDS = "30"
