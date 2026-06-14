@@ -7,6 +7,9 @@
 ^favicon\.ico$
 ^index\.qmd$
 ^styles\.css$
+^live-scores\.js$
+^worker$
+^tests/js$
 ^docs$
 ^_site$
 ^\.quarto$

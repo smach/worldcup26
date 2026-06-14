@@ -110,3 +110,26 @@ table.day-table td.score { font-variant-numeric: tabular-nums; }
 
 /* Tighten the tabset panel borders */
 .panel-tabset { margin-top: 1rem; }
+
+/* ---- Update-scores button (optional live overlay) -------------------- */
+.update-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 0.75rem 0 0.25rem;
+}
+.update-btn {
+  border: 1px solid var(--bs-primary, #1a3b6c);
+  background: var(--bs-primary, #1a3b6c);
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.update-btn:hover:not(:disabled) { filter: brightness(1.1); }
+.update-btn:disabled { opacity: 0.6; cursor: default; }
+.update-status { font-size: 0.85rem; color: #6b7280; }
+.update-status.error { color: #b91c1c; }

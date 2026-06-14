@@ -135,6 +135,34 @@ granularity and is often delayed); the live R functions and chat app,
 which hit the API directly, are truly live. Unset the variable to return
 the site to the free-tier hourly rebuild.
 
+## "Update scores" button on the site (optional)
+
+The static site is normally only as fresh as its last rebuild. During a live
+match, waiting for the GitHub Action to re-render (it builds a container and
+installs R + Quarto) is too slow to watch a scoreline change. As an **option**,
+the page can show an **"Update scores"** button that pulls current scores with
+plain JavaScript — no rebuild — while keeping the API key secret.
+
+The key can't be exposed to the browser, so a pure client-side `fetch` to
+football-data.org is impossible. Instead a tiny **Cloudflare Worker** (in
+[`worker/`](worker/)) holds the key as a secret, fetches the scores, and serves
+a slimmed JSON response to the page. It edge-caches for ~30 seconds, so many
+visitors clicking the button share one upstream API call.
+
+This is entirely opt-in:
+
+- **Off by default.** If `WORLDCUP26_SCORE_PROXY_URL` is unset, no button
+  renders and the site behaves exactly as before. Forking the repo needs nothing.
+- **To turn it on:** deploy the Worker (see [`worker/README.md`](worker/README.md)),
+  then set `WORLDCUP26_SCORE_PROXY_URL` to its URL — in `~/.Renviron` for local
+  preview, or as a GitHub repository *variable* consumed by `publish.yml` for the
+  published site.
+
+The R rebuild pipeline is unchanged; the button is just a fast live overlay on
+top of the rendered snapshot. The score-formatting logic lives in
+`live-scores.js` (a port of the R `score_display()`), unit-tested with
+`node --test tests/js/live-scores.test.mjs`.
+
 ## Caching
 
 API responses are cached to disk for one hour by default (60 seconds in
@@ -197,6 +225,9 @@ to view.
 Site files (all excluded from the package build via `.Rbuildignore`):
 
 - `index.qmd`, `_quarto.yml`, `_brand.yml`, `styles.css` — page source
+- `live-scores.js` — client-side score helpers for the optional "Update scores"
+  button (tested in `tests/js/`)
+- `worker/` — the optional Cloudflare Worker score proxy (see its README)
 - `.github/workflows/publish.yml` — rebuilds the page on every push to
   `main` and publishes to the `gh-pages` branch. A cron schedule
   rebuilds hourly during the match window (15:00–06:00 UTC / 11 AM–2 AM
