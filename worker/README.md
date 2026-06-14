@@ -31,8 +31,11 @@ cd worker
 # 1. Log in (opens a browser once).
 npx wrangler login
 
-# 2. Store the API key as a secret. Paste your PAID key for live scores
-#    (the same one you'd put in FOOTBALL_DATA_API_KEY for live mode).
+# 2. Store the API key as a secret. FOOTBALL_DATA_API_KEY here is the secret's
+#    NAME, not its value — do NOT put the key on this line. After you press
+#    Enter, wrangler prompts "Enter a secret value:"; paste your PAID key there
+#    (the same one you'd use for FOOTBALL_DATA_API_KEY in live mode). The value
+#    is hidden and never stored in shell history or any file.
 npx wrangler secret put FOOTBALL_DATA_API_KEY
 
 # 3. (Optional) edit wrangler.toml: set ALLOWED_ORIGINS to your Pages origin.
