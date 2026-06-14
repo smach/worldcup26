@@ -4,10 +4,30 @@ A tiny serverless proxy that lets the static [worldcup26 Quarto
 site](../index.qmd) refresh live scores from a button **without** rebuilding the
 site and **without** exposing the football-data.org API key in the browser.
 
+## Why this exists
+
+The site is published on **GitHub Pages** and refreshed by a **GitHub Actions**
+workflow that runs the R package in a container. That's perfect for a periodic
+snapshot, but it's slow: every refresh spins up a container and installs R +
+Quarto + package dependencies before it can re-render. During a live match,
+waiting minutes for that just to see the latest score is painful.
+
+This Worker is the fast path. The published page gets an **"Update scores"**
+button that fetches the current scores directly — no Actions run, no container,
+no R — so the scoreline updates in a second or two. The catch is that
+football-data.org needs a secret API key, and **a public static page can't hold
+a secret** (anything in the page or its JavaScript is visible to every visitor).
+So instead of calling the API from the browser, the button calls this Worker,
+which holds the key server-side as a Cloudflare **secret** and returns only the
+scores.
+
+The R/Actions pipeline still runs as the authoritative source; the button is
+just a fast live overlay on top of the last published snapshot.
+
 This is **optional**. If you don't deploy it (and don't set
 `WORLDCUP26_SCORE_PROXY_URL` when rendering the site), the site works exactly as
-before — there's simply no "Update scores" button. The R hourly/10-minute
-rebuild pipeline is unaffected either way.
+before — there's simply no "Update scores" button. The R rebuild pipeline is
+unaffected either way.
 
 ## What it does
 
@@ -33,31 +53,35 @@ Windows**, where installing the `wrangler` CLI can fail on native build
 dependencies. Everything below is point-and-click in your browser.
 
 1. **Create the Worker.** Go to <https://dash.cloudflare.com> → **Workers &
-   Pages** → **Create** → **Create Worker**. Name it `worldcup26-scores` and
-   click **Deploy** (this deploys the throwaway "Hello World" starter).
+   Pages** → **Create application**. When asked how to start, choose **Start with
+   Hello World** (not "Connect GitHub/GitLab", a template, or "Upload static
+   files"). Name it `worldcup26-scores` and click **Deploy** — this deploys the
+   throwaway starter, which you'll replace next.
 
 2. **Paste in the code.** Click **Edit code**. Select everything in the editor
    and delete it, then open [`src/index.js`](src/index.js) from this folder,
-   copy the whole file, paste it in, and click **Deploy**.
+   copy the whole file, paste it in, and click **Deploy** (top right).
 
-3. **Add the API key as a secret.** Open the Worker's **Settings → Variables and
-   Secrets**:
-   - Under **Secrets**, **Add** one named **`FOOTBALL_DATA_API_KEY`** with your
-     paid football-data.org key as the value. (Secrets are write-only — the value
-     never shows again and never appears in the response.)
+   At this point loading the Worker's URL returns `{"error":"proxy not
+   configured"}` — that's expected; it just means the key isn't set yet.
 
-4. **Add two plain variables** (same screen, under **Variables**):
-   - **`ALLOWED_ORIGINS`** =
+3. **Add the API key + variables.** Open the Worker's **Settings** tab →
+   **Variables and Secrets** → **+ Add**. Each entry has a **Type** dropdown:
+   - **Type: Secret** — name **`FOOTBALL_DATA_API_KEY`**, value = your paid
+     football-data.org key. (Secrets are write-only — the value never shows again
+     and never appears in the response.)
+   - **Type: Text** — name **`ALLOWED_ORIGINS`**, value
      `https://smach.github.io,http://localhost:4321,http://127.0.0.1:4321`
-     (replace the GitHub Pages origin with your own if you forked the repo)
-   - **`CACHE_TTL_SECONDS`** = `30`
+     (use your own GitHub Pages origin if you forked the repo).
+   - **Type: Text** — name **`CACHE_TTL_SECONDS`**, value `30`.
 
-5. **Redeploy** so the secret and variables take effect (Deployments → redeploy,
-   or just hit **Deploy** in the editor again).
+4. **Deploy again** so the secret and variables take effect (Cloudflare prompts
+   you to deploy after editing variables; if not, hit **Deploy** in the editor).
 
-6. **Grab your URL.** The Worker's overview page shows it, e.g.
+5. **Grab your URL.** The Worker's overview page shows it, e.g.
    `https://worldcup26-scores.YOUR-SUBDOMAIN.workers.dev`. Paste it into a
-   browser — you should see JSON with a `matches` array and **no key anywhere**.
+   browser — you should now see JSON with a `matches` array and **no key
+   anywhere**.
 
 That URL is what you put in `WORLDCUP26_SCORE_PROXY_URL` ([below](#turn-the-button-on)).
 
