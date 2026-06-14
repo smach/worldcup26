@@ -247,10 +247,13 @@ matchesByDay = d3.groups(
 
 ```{ojs}
 //| echo: false
-viewof dayChoice = Inputs.select(
-  ["All days", ...matchesByDay.map(([d]) => d)],
-  {label: "Day"}
-)
+dayOptions = ["All days", ...matchesByDay.map(([d]) => d)]
+today = dayKey(now)
+
+viewof dayChoice = Inputs.select(dayOptions, {
+  label: "Day",
+  value: dayOptions.includes(today) ? today : "All days"
+})
 ```
 
 ```{ojs}
