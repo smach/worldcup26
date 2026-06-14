@@ -49,7 +49,8 @@ This page rebuilds about every 10 minutes during match windows, with live
 scores from [football-data.org](https://www.football-data.org/)\'s paid API
 tier. An in-progress match shows a running scoreline (e.g. *"1–0 (live)"*).
 Because the page is a periodic snapshot, the scoreline can trail the live match
-by a few minutes.
+by a few minutes. There's an Update Scores button below that uses JavaScript to fetch 
+up-to-date scores if a match is live you want to check.
 
 *Last rebuilt: %s*
 :::', rebuilt))
