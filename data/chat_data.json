@@ -196,7 +196,7 @@
     "away_pk": null,
     "is_finished": true,
     "is_upcoming": false,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -221,7 +221,7 @@
     "away_pk": null,
     "is_finished": true,
     "is_upcoming": false,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -246,7 +246,7 @@
     "away_pk": null,
     "is_finished": true,
     "is_upcoming": false,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -271,7 +271,7 @@
     "away_pk": null,
     "is_finished": true,
     "is_upcoming": false,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -288,15 +288,15 @@
     "home_tla": "SWE",
     "away_team": "Tunisia",
     "away_tla": "TUN",
-    "status": "IN_PLAY",
-    "score_display": "4–1 (live)",
-    "home_score": 4,
+    "status": "FINISHED",
+    "score_display": "5–1",
+    "home_score": 5,
     "away_score": 1,
     "home_pk": null,
     "away_pk": null,
-    "is_finished": false,
-    "is_upcoming": true,
-    "is_today": true,
+    "is_finished": true,
+    "is_upcoming": false,
+    "is_today": false,
     "venue": null
   },
   {
@@ -321,7 +321,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -346,7 +346,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -371,7 +371,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -396,7 +396,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
