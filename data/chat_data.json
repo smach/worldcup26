@@ -838,7 +838,7 @@
     "home_tla": "GER",
     "away_team": "Ivory Coast",
     "away_tla": "CIV",
-    "status": "IN_PLAY",
+    "status": "PAUSED",
     "score_display": "0–1 (live)",
     "home_score": 0,
     "away_score": 1,
