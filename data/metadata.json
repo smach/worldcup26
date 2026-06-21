@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-21T20:25:57Z",
+  "generated_utc": "2026-06-21T20:29:41Z",
   "source": "https://www.football-data.org/ (paid tier, live scores)",
   "note": "is_today, is_upcoming and is_finished are computed as of generated_utc (UTC). Recompute from utc_date / match_date if you need them relative to another time.",
   "n_matches": 104,
@@ -9,6 +9,10 @@
     "chat_data.csv": "One row per match, denormalised (CSV).",
     "teams.json": "Participating teams (JSON).",
     "teams.csv": "Participating teams (CSV).",
-    "worldcup26.rds": "list(matches, teams, chat_data) for R, lossless types."
+    "standings.json": "Group standings, one row per team per group, ranked (JSON).",
+    "standings.csv": "Group standings, one row per team per group, ranked (CSV).",
+    "third_place.json": "Cross-group third-place race, ranked (JSON).",
+    "third_place.csv": "Cross-group third-place race, ranked (CSV).",
+    "worldcup26.rds": "list(matches, teams, chat_data, standings, third_place) for R, lossless types."
   }
 }

@@ -111,6 +111,46 @@ table.day-table td.score { font-variant-numeric: tabular-nums; }
 /* Tighten the tabset panel borders */
 .panel-tabset { margin-top: 1rem; }
 
+/* ---- Standings tab --------------------------------------------------- */
+.standings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 1.25rem 1.75rem;
+}
+.standings-heading {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.25rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.standings-state {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+table.standings { font-size: 0.9rem; }
+table.standings td, table.standings th { padding: 0.4rem 0.55rem; text-align: right; }
+table.standings td:nth-child(2), table.standings th:nth-child(2) { text-align: left; }
+table.standings td.pts { font-weight: 700; font-variant-numeric: tabular-nums; }
+table.standings tr.qualified { background: #eef5ff; }
+table.standings tr.qualified td:first-child { box-shadow: inset 3px 0 0 var(--bs-primary, #1a3b6c); }
+table.standings tr.out { color: #6b7280; }
+table.standings tr.cut-line td { border-bottom: 2px dashed #b91c1c; }
+.tie-flag {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #92400e;
+  background: #fef3c7;
+  border-radius: 3px;
+  padding: 0 0.3em;
+}
+.third-place { max-width: 32rem; }
+
 /* ---- Update-scores button (optional live overlay) -------------------- */
 .update-bar {
   display: flex;
