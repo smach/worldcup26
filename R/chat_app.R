@@ -56,7 +56,13 @@ worldcup26_chat <- function(data    = chat_data(),
     client             = client,
     greeting           = greeting,
     data_description   = chat_data_description(),
-    extra_instructions = chat_extra_instructions(today = eastern_today())
+    # The standings/advancement tables aren't in the `matches` table; they are
+    # pre-computed in R and handed to the model as a snapshot it narrates.
+    extra_instructions = paste(
+      chat_extra_instructions(today = eastern_today()),
+      chat_advancement_digest(),
+      sep = "\n\n"
+    )
   )
   querychat::querychat_app(config, ...)
 }
@@ -84,7 +90,10 @@ chat_default_greeting <- function() {
       "- *When is Canada's next game?*",
       "- *Show me all matches on June 15.*",
       "- *Which teams are in Group D?*",
-      "- *List the round of 16 matches.*",
+      "- *Show the current Group D standings.*",
+      "- *Which teams have clinched a spot in the next round?*",
+      "- *What does Mexico need to advance?*",
+      "- *Show the third-place standings.*",
       "- *Has Brazil played yet?*",
       "",
       "Data comes from [football-data.org](https://www.football-data.org/).",
@@ -145,6 +154,12 @@ chat_data_description <- function() {
     "",
     "Knockout matches may have NULL `home_team` / `away_team` until earlier",
     "rounds have been decided. Treat those rows as bracket placeholders.",
+    "",
+    "Group standings, each team's top-two advancement status, and the",
+    "third-place race are **not** columns in this table. They are provided as",
+    "pre-computed tables in the instructions below. Use those tables for any",
+    "standings or \"who has clinched / is eliminated / what needs to happen\"",
+    "question. Do not try to derive them from `matches` yourself.",
     sep = "\n"
   )
 }
@@ -181,4 +196,146 @@ chat_extra_instructions <- function(today = eastern_today()) {
   format(today, "%Y-%m-%d"),
   format(today, "%Y-%m-%d")
   )
+}
+
+#' Render the pre-computed standings/advancement snapshot for the LLM.
+#'
+#' Builds a compact Markdown digest from [group_standings()],
+#' [advancement_status()], [third_place_table()], and (for still-alive teams)
+#' [team_scenario()]. This is the authoritative source the chat narrates from,
+#' so it doesn't have to derive standings or advancement itself in SQL.
+#' @noRd
+chat_advancement_digest <- function(matches = all_matches(),
+                                    teams   = list_teams(),
+                                    today   = eastern_today()) {
+  st <- group_standings(matches, teams)
+  if (nrow(st) == 0L) {
+    return(paste(
+      "## Group standings & advancement",
+      "",
+      "No group-stage standings are available yet.",
+      sep = "\n"
+    ))
+  }
+  adv <- advancement_status(matches, teams)
+  tp  <- third_place_table(matches, teams)
+  st  <- dplyr::left_join(st, adv[, c("team_id", "top2_status")], by = "team_id")
+
+  header <- c(
+    sprintf("## Group standings & advancement (snapshot %s)",
+            format(today, "%Y-%m-%d")),
+    "",
+    "Tournament format: 12 groups of four. The top two of each group plus the",
+    "eight best third-placed teams reach the Round of 32.",
+    "",
+    "Answer standings and advancement questions from the tables below. Do",
+    "not recompute them yourself. The `Status` column is authoritative for the",
+    "top-two race. The third-place race is provisional while the group stage is",
+    "in progress: report it as a current standing / \"in contention\", never as a",
+    "guaranteed verdict. A team marked \"(tie)\" is level on every tiebreaker the",
+    "data supports; the order then depends on disciplinary (card) records and",
+    "FIFA ranking, which are unavailable; say so rather than guess.",
+    ""
+  )
+
+  group_blocks <- purrr::map_chr(
+    sort(unique(st$group_letter)),
+    \(g) render_group_block(st[st$group_letter == g, , drop = FALSE], g)
+  )
+
+  paste(
+    c(header, group_blocks, render_third_place(tp), render_scenarios(adv, matches, teams)),
+    collapse = "\n"
+  )
+}
+
+#' Human-readable label for a `top2_status` value.
+#' @noRd
+top2_label <- function(x) {
+  labels <- c(
+    won_group       = "Won group",
+    clinched_top2   = "Through (top 2)",
+    eliminated_top2 = "Out of top 2",
+    alive           = "Still alive"
+  )
+  out <- unname(labels[x])
+  dplyr::coalesce(out, "")
+}
+
+#' Render one group's standings table (Markdown), with status and tie flags.
+#' @noRd
+render_group_block <- function(df, g) {
+  title <- sprintf(
+    "### Group %s %s",
+    g, if (isTRUE(df$group_complete[1])) "(final)" else "(in progress)"
+  )
+  status <- paste0(top2_label(df$top2_status), ifelse(df$tie_unresolved, " (tie)", ""))
+  rows <- sprintf(
+    "| %d | %s | %d | %d | %d | %d | %d | %d | %d | %d | %s |",
+    df$rank, df$team, df$played, df$won, df$drawn, df$lost,
+    df$gf, df$ga, df$gd, df$points, status
+  )
+  paste(c(
+    title,
+    "| Rank | Team | P | W | D | L | GF | GA | GD | Pts | Status |",
+    "|---|---|---|---|---|---|---|---|---|---|---|",
+    rows, ""
+  ), collapse = "\n")
+}
+
+#' Render the cross-group third-place race table (Markdown).
+#' @noRd
+render_third_place <- function(tp) {
+  if (nrow(tp) == 0L) return("")
+  final <- !any(tp$provisional)
+  rows <- sprintf(
+    "| %d | %s | %s | %d | %d | %d | %d | %s | %s |",
+    tp$position, tp$group_letter, tp$team, tp$played, tp$points, tp$gd, tp$gf,
+    ifelse(tp$currently_advancing, "yes", "no"),
+    ifelse(tp$in_contention, "yes", "")
+  )
+  note <- if (final) {
+    "The top eight advance to the Round of 32."
+  } else {
+    paste(
+      "Top eight are currently advancing, but positions can still change while",
+      "groups are in progress; treat this as provisional, not settled."
+    )
+  }
+  paste(c(
+    sprintf("### Third-place race %s", if (final) "(final)" else "(provisional)"),
+    "| Pos | Group | Team | P | Pts | GD | GF | Advancing? | In contention |",
+    "|---|---|---|---|---|---|---|---|---|",
+    rows, "", note, ""
+  ), collapse = "\n")
+}
+
+#' Render one line per still-alive team describing what its own remaining
+#' match(es) would mean for a top-two finish.
+#' @noRd
+render_scenarios <- function(adv, matches, teams) {
+  if (all(adv$group_complete)) return("")
+  alive <- adv[adv$top2_status == "alive", , drop = FALSE]
+  if (nrow(alive) == 0L) return("")
+
+  lines <- purrr::map_chr(seq_len(nrow(alive)), function(i) {
+    sc <- tryCatch(
+      team_scenario(alive$team[i], matches, teams),
+      error = function(e) NULL
+    )
+    if (is.null(sc) || nrow(sc) == 0L) return(NA_character_)
+    detail <- paste(sprintf("%s -> %s", sc$scenario, sc$result), collapse = "; ")
+    sprintf("- %s (Group %s): %s", alive$team[i], alive$group_letter[i], detail)
+  })
+  lines <- lines[!is.na(lines)]
+  if (length(lines) == 0L) return("")
+
+  paste(c(
+    "### What still-alive teams need (top-two race)",
+    "",
+    "Each line covers only that team's own remaining group match(es); outcomes",
+    "are from the named team's perspective.",
+    "",
+    lines, ""
+  ), collapse = "\n")
 }

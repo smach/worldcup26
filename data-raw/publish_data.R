@@ -22,10 +22,18 @@ matches <- all_matches()
 teams   <- list_teams()
 flat    <- chat_data(matches = matches, teams = teams)
 
+# Group standings and the third-place race, from the same functions the chat and
+# the Standings tab use.
+standings   <- group_standings(matches, teams)
+third_place <- third_place_table(matches, teams)
+
 # Lossless snapshot for R: readRDS(url(".../worldcup26.rds")) restores exact
 # types with no JSON round-trip loss.
 saveRDS(
-  list(matches = matches, teams = teams, chat_data = flat),
+  list(
+    matches = matches, teams = teams, chat_data = flat,
+    standings = standings, third_place = third_place
+  ),
   file.path(out_dir, "worldcup26.rds")
 )
 
@@ -40,9 +48,19 @@ jsonlite::write_json(
   teams, file.path(out_dir, "teams.json"),
   pretty = TRUE, na = "null", auto_unbox = TRUE
 )
+jsonlite::write_json(
+  standings, file.path(out_dir, "standings.json"),
+  pretty = TRUE, na = "null", auto_unbox = TRUE
+)
+jsonlite::write_json(
+  third_place, file.path(out_dir, "third_place.json"),
+  pretty = TRUE, na = "null", auto_unbox = TRUE
+)
 
-utils::write.csv(flat,  file.path(out_dir, "chat_data.csv"), row.names = FALSE, na = "")
-utils::write.csv(teams, file.path(out_dir, "teams.csv"),     row.names = FALSE, na = "")
+utils::write.csv(flat,        file.path(out_dir, "chat_data.csv"),   row.names = FALSE, na = "")
+utils::write.csv(teams,       file.path(out_dir, "teams.csv"),       row.names = FALSE, na = "")
+utils::write.csv(standings,   file.path(out_dir, "standings.csv"),   row.names = FALSE, na = "")
+utils::write.csv(third_place, file.path(out_dir, "third_place.csv"), row.names = FALSE, na = "")
 
 # Machine-readable manifest. The is_* flags are computed as of generated_utc;
 # recompute from utc_date / match_date if you need them relative to another time.
@@ -61,11 +79,15 @@ meta <- list(
   n_matches = nrow(flat),
   n_teams   = nrow(teams),
   files = list(
-    "chat_data.json" = "One row per match, denormalised (JSON).",
-    "chat_data.csv"  = "One row per match, denormalised (CSV).",
-    "teams.json"     = "Participating teams (JSON).",
-    "teams.csv"      = "Participating teams (CSV).",
-    "worldcup26.rds" = "list(matches, teams, chat_data) for R, lossless types."
+    "chat_data.json"   = "One row per match, denormalised (JSON).",
+    "chat_data.csv"    = "One row per match, denormalised (CSV).",
+    "teams.json"       = "Participating teams (JSON).",
+    "teams.csv"        = "Participating teams (CSV).",
+    "standings.json"   = "Group standings, one row per team per group, ranked (JSON).",
+    "standings.csv"    = "Group standings, one row per team per group, ranked (CSV).",
+    "third_place.json" = "Cross-group third-place race, ranked (JSON).",
+    "third_place.csv"  = "Cross-group third-place race, ranked (CSV).",
+    "worldcup26.rds"   = "list(matches, teams, chat_data, standings, third_place) for R, lossless types."
   )
 )
 jsonlite::write_json(

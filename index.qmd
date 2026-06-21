@@ -22,6 +22,12 @@ matches_for_js <- matches |>
   # datetime/local columns so a Date doesn't round-trip through ojs_define().
   select(-utc_date, -match_date, -kickoff)
 
+# Group standings and the third-place race, computed from the same matches the
+# rest of the page uses (no extra API calls). The chat app uses these same
+# functions; here they feed the Standings tab.
+standings   <- group_standings(matches, teams)
+third_place <- third_place_table(matches, teams)
+
 live <- worldcup26:::live_mode()
 
 # Optional client-side live-score overlay. When WORLDCUP26_SCORE_PROXY_URL is
@@ -31,10 +37,12 @@ live <- worldcup26:::live_mode()
 score_proxy_url <- Sys.getenv("WORLDCUP26_SCORE_PROXY_URL", "")
 
 ojs_define(
-  teams_data      = teams,
-  matches_data    = matches_for_js,
-  score_proxy_url = score_proxy_url,
-  last_updated    = format(Sys.time(), "%Y-%m-%d %H:%M EDT", tz = "America/New_York")
+  teams_data       = teams,
+  matches_data     = matches_for_js,
+  standings_data   = standings,
+  third_place_data = third_place,
+  score_proxy_url  = score_proxy_url,
+  last_updated     = format(Sys.time(), "%Y-%m-%d %H:%M EDT", tz = "America/New_York")
 )
 ```
 
@@ -273,6 +281,34 @@ html`${dayList.map(([day, dayMatches]) => html`
 `)}`
 ```
 
+## Standings
+
+```{ojs}
+//| echo: false
+standings  = transpose(standings_data)
+thirdPlace = transpose(third_place_data)
+groupLetters = Array.from(new Set(standings.map(d => d.group_letter)))
+  .filter(g => g != null).sort()
+```
+
+```{ojs}
+//| echo: false
+groupLetters.length === 0
+  ? html`<p class="muted">No group-stage standings yet — check back once matches kick off.</p>`
+  : html`<div class="standings-grid">
+      ${groupLetters.map(g => standingsTable(g, standings.filter(d => d.group_letter === g)))}
+    </div>`
+```
+
+### Third-place race
+
+```{ojs}
+//| echo: false
+thirdPlace.length === 0
+  ? html`<p class="muted">No third-place standings yet.</p>`
+  : thirdPlaceTable(thirdPlace)
+```
+
 :::
 
 ```{ojs}
@@ -422,6 +458,70 @@ function matchListTable(rows) {
     </tr>`)}
     </tbody>
   </table>`;
+}
+
+// Goal difference with an explicit + for positive values.
+function fmtGd(gd) {
+  return gd > 0 ? `+${gd}` : `${gd}`;
+}
+
+// One group's standings table. Rows arrive already ordered by rank. The top two
+// (who advance directly) are highlighted; teams level on every available
+// tiebreaker carry a "tie" flag (the deciding criteria — cards, FIFA ranking —
+// aren't in the data).
+function standingsTable(letter, rows) {
+  const complete = rows.length > 0 && rows[0].group_complete;
+  return html`<section class="standings-group">
+    <h3 class="standings-heading">Group ${letter}
+      <span class="standings-state">${complete ? "Final" : "In progress"}</span>
+    </h3>
+    <table class="schedule standings">
+      <thead>
+        <tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th>
+            <th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>
+      </thead>
+      <tbody>
+        ${rows.map(r => html`<tr class="${r.rank <= 2 ? "qualified" : ""}">
+          <td>${r.rank}</td>
+          <td>${crestFor(r.team, r.team_id)}${r.tie_unresolved
+            ? html` <span class="tie-flag" title="Level on every available tiebreaker">tie</span>`
+            : ""}</td>
+          <td>${r.played}</td><td>${r.won}</td><td>${r.drawn}</td><td>${r.lost}</td>
+          <td>${r.gf}</td><td>${r.ga}</td><td>${fmtGd(r.gd)}</td>
+          <td class="pts">${r.points}</td>
+        </tr>`)}
+      </tbody>
+    </table>
+  </section>`;
+}
+
+// The cross-group race for the eight best third-placed teams. A line after
+// position 8 marks the qualification cut; while groups are in progress the
+// ordering is provisional.
+function thirdPlaceTable(rows) {
+  const provisional = rows.length > 0 && rows[0].provisional;
+  return html`<div class="third-place">
+    <table class="schedule standings">
+      <thead>
+        <tr><th>Pos</th><th>Group</th><th>Team</th><th>P</th><th>Pts</th>
+            <th>GD</th><th>GF</th></tr>
+      </thead>
+      <tbody>
+        ${rows.map(r => html`<tr class="${r.currently_advancing ? "qualified" : "out"}${r.position === 8 ? " cut-line" : ""}">
+          <td>${r.position}</td>
+          <td>${r.group_letter}</td>
+          <td>${crestFor(r.team, r.team_id)}</td>
+          <td>${r.played}</td>
+          <td class="pts">${r.points}</td>
+          <td>${fmtGd(r.gd)}</td>
+          <td>${r.gf}</td>
+        </tr>`)}
+      </tbody>
+    </table>
+    <p class="muted">${provisional
+      ? "Top eight are currently advancing — provisional while groups are in progress; both the third-placed team and its record can still change."
+      : "The top eight advance to the Round of 32."}</p>
+  </div>`;
 }
 ```
 

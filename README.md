@@ -180,9 +180,52 @@ clear_cache()                         # nuke the cache manually
 - `team_next_match(team)` — earliest upcoming match
 - `team_past_results(team)` — already-played matches
 - `all_matches()` — every World Cup match in one tibble
+- `group_standings()` — group tables (points, goal difference, rank) with the
+  FIFA 2026 tiebreakers
+- `advancement_status()` — each team's top-two status (won group / clinched /
+  eliminated / still alive)
+- `team_scenario(team)` — what a team's own remaining match(es) would mean for a
+  top-two finish
+- `third_place_table()` — the race for the eight best third-placed teams
 - `chat_data()` — the flat matches table used by the chat dashboard
 - `worldcup26_chat()` — launches the natural-language chat dashboard
 - `clear_cache()` — drop cached responses
+
+## Group standings & advancement
+
+The package computes group standings and advancement scenarios in plain,
+tested R — so the chat, the Quarto site, and the published data files all share
+one correct answer rather than asking an LLM to derive the tournament rules on
+the fly:
+
+``` r
+group_standings()       # the 12 group tables, ranked
+advancement_status()    # won group / clinched / eliminated / still alive
+team_scenario("Mexico") # what Mexico's own remaining match(es) would mean
+third_place_table()     # the race for the 8 best third-placed teams
+```
+
+The 2026 format: 12 groups of four, with the top two of each group plus the
+eight best third-placed teams advancing to a Round of 32. `group_standings()`
+applies the FIFA in-group tiebreakers — points, then head-to-head (points, goal
+difference, goals), then overall goal difference and goals. `advancement_status()`
+is exact for the top-two race within a group: it enumerates every remaining-match
+outcome and never over-claims (a "clinched" or "eliminated" verdict holds even
+under the least favourable tiebreaks).
+
+Two honest limits, surfaced rather than hidden:
+
+- The deepest official tiebreakers — disciplinary/conduct (card) records and
+  FIFA ranking — aren't exposed by the API. Teams that are level on everything
+  else are flagged as a **tie** rather than ordered by a guess.
+- The **third-place race couples all 12 groups**, so a guaranteed "this team has
+  clinched/can't reach a best-eight place" verdict isn't computed mid-tournament.
+  `third_place_table()` shows it as a **provisional** ranking (with the top eight
+  marked) until every group is complete.
+
+The companion Quarto site shows all of this on a **Standings** tab, and the chat
+dashboard answers questions like *"Which teams have clinched their group?"* and
+*"What does Mexico need to advance?"* from the same computed snapshot.
 
 ## Natural-language chat dashboard
 
@@ -216,11 +259,14 @@ worldcup26_chat(model = "claude-opus-4-7")
 ## Companion Quarto site
 
 This repo also ships a small Quarto + Observable JS site that lets
-visitors browse the schedule by team or by date. It builds on top of the
-package — an R chunk in `index.qmd` calls `list_teams()` and
-`all_matches()` at render time and hands the data to Observable JS via
-`ojs_define()`. The rendered page is fully static and needs no API key
-to view.
+visitors browse the schedule by team or by date, and view group
+**standings** (with the third-place race). It builds on top of the
+package — an R chunk in `index.qmd` calls `list_teams()`, `all_matches()`,
+`group_standings()`, and `third_place_table()` at render time and hands the
+data to Observable JS via `ojs_define()`. The rendered page is fully static
+and needs no API key to view. The standings reflect the last rebuild; the
+optional "Update scores" button refreshes live match scores but does not
+recompute the standings tables.
 
 Site files (all excluded from the package build via `.Rbuildignore`):
 
@@ -276,7 +322,9 @@ key (and without hitting the football-data.org rate limit yourself). Base URL:
 | [`chat_data.json`](https://smach.github.io/worldcup26/data/chat_data.json) | One row per match, denormalised (team names, three-letter codes, stage labels, scores, status, convenience flags). JSON. |
 | [`chat_data.csv`](https://smach.github.io/worldcup26/data/chat_data.csv) | Same table as CSV. |
 | [`teams.json`](https://smach.github.io/worldcup26/data/teams.json) / [`teams.csv`](https://smach.github.io/worldcup26/data/teams.csv) | Participating teams. |
-| [`worldcup26.rds`](https://smach.github.io/worldcup26/data/worldcup26.rds) | `list(matches, teams, chat_data)` for R, with exact types preserved (`POSIXct` kickoff times, integer `NA`s, logicals). |
+| [`standings.json`](https://smach.github.io/worldcup26/data/standings.json) / [`standings.csv`](https://smach.github.io/worldcup26/data/standings.csv) | Group standings, one row per team per group, ranked with the FIFA tiebreakers. |
+| [`third_place.json`](https://smach.github.io/worldcup26/data/third_place.json) / [`third_place.csv`](https://smach.github.io/worldcup26/data/third_place.csv) | The cross-group third-place race (provisional until groups finish). |
+| [`worldcup26.rds`](https://smach.github.io/worldcup26/data/worldcup26.rds) | `list(matches, teams, chat_data, standings, third_place)` for R, with exact types preserved (`POSIXct` kickoff times, integer `NA`s, logicals). |
 | [`metadata.json`](https://smach.github.io/worldcup26/data/metadata.json) | Generation timestamp, row counts, and a file index. |
 
 Examples:

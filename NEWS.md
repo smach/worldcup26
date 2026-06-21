@@ -1,3 +1,26 @@
+# worldcup26 0.6.0
+
+* Added group standings and advancement reasoning. Four new functions compute
+  this in tested R (not by asking the chat's text-to-SQL model to derive it):
+  `group_standings()` builds the group tables with the FIFA 2026 in-group
+  tiebreakers (points, head-to-head, then overall goal difference and goals);
+  `advancement_status()` reports whether each team has won its group, clinched a
+  top-two place, been eliminated from the top two, or is still alive, computed
+  by enumerating every remaining-match outcome; `team_scenario()` spells out
+  what a team's own remaining match(es) would mean; and `third_place_table()`
+  ranks the race for the eight best third-placed teams.
+* The chat dashboard now answers standings and "who has clinched / is
+  eliminated / what does my team need" questions from a pre-computed snapshot,
+  and the companion Quarto site gains a **Standings** tab. The published data
+  set adds `standings.json`/`.csv` and `third_place.json`/`.csv`.
+* Honest limits, surfaced rather than hidden: the deepest official tiebreakers
+  (disciplinary/conduct records and FIFA ranking) aren't in the API, so teams
+  level on everything else are flagged as ties; and the cross-group third-place
+  race is shown as a provisional standing, not a guaranteed verdict, while
+  groups are in progress.
+
+  _[This update was written by Claude]_
+
 # worldcup26 0.5.1
 
 * Bug fix: the publish workflow's schedule didn't match its documented
