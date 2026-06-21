@@ -17,8 +17,10 @@ A tibble of matches. \code{utc_date} is the raw UTC kickoff instant
 (POSIXct, used for ordering); \code{match_date} (Date) and \code{kickoff}
 (text, e.g. \code{"9:00 PM EDT"}) present the kickoff in \code{tz}. Other
 columns: \code{match_id}, \code{matchday}, \code{stage}, \code{group}, \code{home_team_id},
-\code{home_team}, \code{away_team_id}, \code{away_team}, \code{status}, \code{score_display},
-\code{home_score}, \code{away_score}, \code{home_pk}, \code{away_pk}, \code{venue}.
+\code{home_team}, \code{away_team_id}, \code{away_team}, \code{status}, \code{minute},
+\code{injury_time} (live match clock; NA off the paid tier or when not
+in play), \code{score_display}, \code{home_score}, \code{away_score}, \code{home_pk},
+\code{away_pk}, \code{venue}.
 }
 \description{
 Returns one tidy tibble of all 2026 World Cup matches with score and

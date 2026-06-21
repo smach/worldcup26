@@ -38,7 +38,13 @@ fwc_get <- function(path, query = list()) {
   req <- httr2::request(fd_base_url()) |>
     httr2::req_url_path_append(path) |>
     httr2::req_url_query(!!!purrr::compact(query)) |>
-    httr2::req_headers(`X-Auth-Token` = fd_api_key()) |>
+    # X-Api-Version v4.1 opts into the `minute`/`injuryTime` fields for in-play
+    # matches; it's purely additive (older fields are unchanged), so it's safe
+    # to send on every request.
+    httr2::req_headers(
+      `X-Auth-Token` = fd_api_key(),
+      `X-Api-Version` = "v4.1"
+    ) |>
     httr2::req_user_agent("worldcup26 R package (https://github.com/smach/worldcup26)") |>
     httr2::req_retry(
       max_tries = 3,

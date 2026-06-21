@@ -40,6 +40,33 @@ test("Live status before the first goal falls back to 'in progress'", () => {
   assert.equal(computeScoreDisplay({ status: "PENALTY_SHOOTOUT", now: NOW }), "in progress");
 });
 
+test("Live scoreline appends the match clock when a minute is available", () => {
+  assert.equal(
+    computeScoreDisplay({ status: "IN_PLAY", home: 1, away: 0, minute: 67, now: NOW }),
+    "1–0 (live 67')"
+  );
+  assert.equal(
+    computeScoreDisplay({ status: "IN_PLAY", home: 0, away: 0, minute: 80, now: NOW }),
+    "0–0 (live 80')"
+  );
+});
+
+test("Injury time is shown as minute+added", () => {
+  assert.equal(
+    computeScoreDisplay({ status: "IN_PLAY", home: 1, away: 1, minute: 45, injuryTime: 2, now: NOW }),
+    "1–1 (live 45+2')"
+  );
+  // injuryTime of 0 means no stoppage time to show.
+  assert.equal(
+    computeScoreDisplay({ status: "IN_PLAY", home: 1, away: 1, minute: 45, injuryTime: 0, now: NOW }),
+    "1–1 (live 45')"
+  );
+});
+
+test("The clock rides along even before the first goal", () => {
+  assert.equal(computeScoreDisplay({ status: "IN_PLAY", minute: 12, now: NOW }), "in progress (12')");
+});
+
 test("SCHEDULED/TIMED: future is blank, past is 'no score available yet'", () => {
   assert.equal(computeScoreDisplay({ status: "SCHEDULED", utcDate: FUTURE, now: NOW }), "");
   assert.equal(computeScoreDisplay({ status: "TIMED", utcDate: FUTURE, now: NOW }), "");
@@ -82,6 +109,17 @@ test("matching entry updates status, scores, and recomputes display", () => {
   // unmatched row untouched
   assert.equal(out[1].status, "TIMED");
   assert.equal(out[1].score_display, "");
+});
+
+test("minute/injuryTime from the proxy flow into the recomputed display", () => {
+  const out = mergeLiveScores(
+    base,
+    [{ id: 1, status: "IN_PLAY", home: 2, away: 1, minute: 45, injuryTime: 3 }],
+    NOW
+  );
+  assert.equal(out[0].score_display, "2–1 (live 45+3')");
+  assert.equal(out[0].minute, 45);
+  assert.equal(out[0].injury_time, 3);
 });
 
 test("string ids from the proxy still match integer match_id", () => {

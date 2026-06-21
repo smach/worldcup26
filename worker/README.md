@@ -33,9 +33,11 @@ unaffected either way.
 
 - Holds your football-data.org key as a Cloudflare **secret** (never in code,
   never in the response).
-- Fetches `competitions/WC/matches`, slims it to one small entry per match
-  (`id`, `status`, `home`, `away`, `homePk`, `awayPk`, `utcDate`), and returns
-  JSON with CORS headers so the page can `fetch()` it.
+- Fetches `competitions/WC/matches` (with the `X-Api-Version: v4.1` header, which
+  adds the live `minute`/`injuryTime` fields), slims it to one small entry per
+  match (`id`, `status`, `home`, `away`, `homePk`, `awayPk`, `utcDate`,
+  `minute`, `injuryTime`), and returns JSON with CORS headers so the page can
+  `fetch()` it.
 - **Edge-caches** for `CACHE_TTL_SECONDS` (default 30s), so many visitors
   clicking the button in the same window share a single upstream API call — this
   protects your rate limit on a public page.

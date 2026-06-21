@@ -64,6 +64,8 @@ export default {
         resp = await fetch(UPSTREAM, {
           headers: {
             "X-Auth-Token": env.FOOTBALL_DATA_API_KEY,
+            // v4.1 opts into the live `minute`/`injuryTime` fields (additive).
+            "X-Api-Version": "v4.1",
             "User-Agent": "worldcup26 score proxy (https://github.com/smach/worldcup26)",
           },
         });
@@ -89,7 +91,9 @@ export default {
 
 // Reduce the upstream response to one small entry per match: only the fields
 // the page needs to recompute a scoreline. Field names are chosen to match
-// live-scores.js (id, status, home, away, homePk, awayPk, utcDate).
+// live-scores.js (id, status, home, away, homePk, awayPk, utcDate, minute,
+// injuryTime). minute/injuryTime are the v4.1 live-clock fields (null off the
+// paid tier or when a match isn't in play).
 function slimMatches(body) {
   const matches = Array.isArray(body?.matches) ? body.matches : [];
   return {
@@ -102,6 +106,8 @@ function slimMatches(body) {
       homePk: m.score?.penalties?.home ?? null,
       awayPk: m.score?.penalties?.away ?? null,
       utcDate: m.utcDate ?? null,
+      minute: m.minute ?? null,
+      injuryTime: m.injuryTime ?? null,
     })),
   };
 }
