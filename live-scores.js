@@ -25,8 +25,16 @@ function toDate(v) {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
+// Format the live match clock, e.g. "80'" or "45+2'". Returns "" when the
+// minute is unavailable, so callers can append it unconditionally. Mirrors
+// R clock_label(). `injury` is the added/stoppage minutes (missing or 0 = none).
+function clockLabel(minute, injury) {
+  if (isMissing(minute)) return "";
+  return !isMissing(injury) && injury > 0 ? `${minute}+${injury}'` : `${minute}'`;
+}
+
 // Build the human-readable scoreline for one match (live-mode rules).
-//   { status, home, away, homePk, awayPk, utcDate, now }
+//   { status, home, away, homePk, awayPk, utcDate, minute, injuryTime, now }
 export function computeScoreDisplay({
   status,
   home,
@@ -34,6 +42,8 @@ export function computeScoreDisplay({
   homePk,
   awayPk,
   utcDate,
+  minute,
+  injuryTime,
   now = new Date(),
 } = {}) {
   if (isMissing(status)) return "";
@@ -45,7 +55,12 @@ export function computeScoreDisplay({
   const inPast = d !== null && d < nowDate;
 
   if (LIVE_STATUSES.has(status)) {
-    return hasScore ? `${home}${DASH}${away} (live)` : "in progress";
+    const clock = clockLabel(minute, injuryTime);
+    if (hasScore) {
+      const inner = clock ? `live ${clock}` : "live";
+      return `${home}${DASH}${away} (${inner})`;
+    }
+    return clock ? `in progress (${clock})` : "in progress";
   }
   if (FINAL_STATUSES.has(status)) {
     if (!hasScore) return "no score available yet";
@@ -93,6 +108,8 @@ export function mergeLiveScores(baseMatches, liveEntries, now = new Date()) {
       homePk: e.homePk,
       awayPk: e.awayPk,
       utcDate: m.utc_date ?? m.utc_date_str,
+      minute: e.minute,
+      injuryTime: e.injuryTime,
       now,
     });
     return {
@@ -102,6 +119,8 @@ export function mergeLiveScores(baseMatches, liveEntries, now = new Date()) {
       away_score: e.away,
       home_pk: e.homePk,
       away_pk: e.awayPk,
+      minute: e.minute,
+      injury_time: e.injuryTime,
       score_display,
     };
   });
