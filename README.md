@@ -86,7 +86,7 @@ Match scores are reported in a single `score_display` column:
 |-----------------------------------------|----------------------------|
 | Match yet to start                      | `""`                       |
 | Match in progress (free tier)           | `"in progress"`            |
-| Match in progress (live mode)           | e.g. `"1-0 (live)"`        |
+| Match in progress (live mode)           | e.g. `"1-0 (live 67')"`    |
 | Recently completed, no score posted yet | `"no score available yet"` |
 | Completed match with score              | e.g. `"2–1"`               |
 | Knockout decided on penalties           | e.g. `"1–1 (4–3 PK)"`      |
@@ -115,8 +115,10 @@ Restart R. (For a single session you can instead use
 
 With live mode on:
 
-- In-progress matches show a running scoreline, e.g. `"1-0 (live)"`,
-  instead of `"in progress"`.
+- In-progress matches show a running scoreline with the match clock, e.g.
+  `"1-0 (live 67')"` (or `"1-0 (live 45+2')"` in stoppage time), instead of
+  `"in progress"`. The clock comes from the API's v4.1 `minute`/`injuryTime`
+  fields.
 - The on-disk cache TTL drops to 60 seconds (from 1 hour) so data stays
   fresh; the chat dashboard and direct function calls are then genuinely
   live.

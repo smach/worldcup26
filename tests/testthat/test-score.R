@@ -5,11 +5,13 @@ sd <- function(status, home = NA_integer_, away = NA_integer_,
                pk_home = NA_integer_, pk_away = NA_integer_,
                utc_date = as.POSIXct("2026-06-15", tz = "UTC"),
                now = as.POSIXct("2026-06-20", tz = "UTC"),
+               minute = NA_integer_, injury = NA_integer_,
                live = FALSE) {
   worldcup26:::score_display(
     status = status, home = home, away = away,
     pk_home = pk_home, pk_away = pk_away,
-    utc_date = utc_date, now = now, live = live
+    utc_date = utc_date, now = now,
+    minute = minute, injury = injury, live = live
   )
 }
 
@@ -42,6 +44,25 @@ test_that("Live mode shows a running scoreline when a score is present", {
 
 test_that("Live mode falls back to 'in progress' before the first goal", {
   expect_equal(sd("IN_PLAY", live = TRUE), "in progress")
+})
+
+test_that("Live mode appends the match clock when a minute is available", {
+  expect_equal(sd("IN_PLAY", 1L, 0L, minute = 67L, live = TRUE), "1–0 (live 67')")
+  expect_equal(sd("IN_PLAY", 0L, 0L, minute = 80L, live = TRUE), "0–0 (live 80')")
+})
+
+test_that("Injury time is shown as minute+added", {
+  expect_equal(sd("IN_PLAY", 1L, 1L, minute = 45L, injury = 2L, live = TRUE), "1–1 (live 45+2')")
+  # injuryTime of 0 (or NA) means no stoppage time to show.
+  expect_equal(sd("IN_PLAY", 1L, 1L, minute = 45L, injury = 0L, live = TRUE), "1–1 (live 45')")
+})
+
+test_that("The clock rides along even before the first goal", {
+  expect_equal(sd("IN_PLAY", minute = 12L, live = TRUE), "in progress (12')")
+})
+
+test_that("A missing minute leaves the scoreline unchanged", {
+  expect_equal(sd("IN_PLAY", 2L, 1L, live = TRUE), "2–1 (live)")
 })
 
 test_that("score_display() defaults the live flag from live_mode()", {

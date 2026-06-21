@@ -55,8 +55,9 @@ if (live) {
     '::: {.callout-note appearance="simple"}
 This page rebuilds about every 10 minutes during match windows, with live
 scores from [football-data.org](https://www.football-data.org/)\'s paid API
-tier. An in-progress match shows a running scoreline (e.g. *"1–0 (live)"*).
-Because the page is a periodic snapshot, the scoreline can trail the live match
+tier. An in-progress match shows a running scoreline with the match clock
+(e.g. *"1–0 (live 67\')"*). Because the page is a periodic snapshot, the
+scoreline and clock can trail the live match
 by a few minutes. There is an Update Scores button below that uses JavaScript to fetch 
 up-to-date scores if a match is live you want to check.
 
@@ -405,17 +406,21 @@ function nextMatchCard(m, team) {
 // `score_display` from R is always home–away. On a team page we want the
 // selected team's goals first, so the same match reads as a win for one
 // side and a loss for the other. Non-numeric strings ("in progress",
-// "no score available yet", "postponed", "") pass through unchanged.
+// "in progress (80')", "no score available yet", "postponed", "") pass
+// through unchanged.
 function flipScore(s) {
   if (!s) return s;
-  const m = s.match(/^(\d+)–(\d+)(\s*\((?:(\d+)–(\d+)\s*PK|live)\))?$/);
-  if (!m) return s;
-  const [, h, a, suffix, pkh, pka] = m;
-  let out = `${a}–${h}`;
-  if (suffix) {
-    out += pkh !== undefined ? ` (${pka}–${pkh} PK)` : ` (live)`;
-  }
-  return out;
+  // Final with penalties: "1–1 (4–3 PK)" — swap both pairs.
+  let m = s.match(/^(\d+)–(\d+)\s*\((\d+)–(\d+)\s*PK\)$/);
+  if (m) return `${m[2]}–${m[1]} (${m[4]}–${m[3]} PK)`;
+  // Live line, optionally with a clock: "1–0 (live)" / "1–0 (live 45+2')" —
+  // swap the goals, keep the suffix verbatim (it has no per-team numbers).
+  m = s.match(/^(\d+)–(\d+)(\s*\(live[^)]*\))$/);
+  if (m) return `${m[2]}–${m[1]}${m[3]}`;
+  // Plain full-time line: "2–1".
+  m = s.match(/^(\d+)–(\d+)$/);
+  if (m) return `${m[2]}–${m[1]}`;
+  return s;
 }
 
 function scheduleTable(rows, team) {

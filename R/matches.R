@@ -12,8 +12,10 @@
 #'   (POSIXct, used for ordering); `match_date` (Date) and `kickoff`
 #'   (text, e.g. `"9:00 PM EDT"`) present the kickoff in `tz`. Other
 #'   columns: `match_id`, `matchday`, `stage`, `group`, `home_team_id`,
-#'   `home_team`, `away_team_id`, `away_team`, `status`, `score_display`,
-#'   `home_score`, `away_score`, `home_pk`, `away_pk`, `venue`.
+#'   `home_team`, `away_team_id`, `away_team`, `status`, `minute`,
+#'   `injury_time` (live match clock; NA off the paid tier or when not
+#'   in play), `score_display`, `home_score`, `away_score`, `home_pk`,
+#'   `away_pk`, `venue`.
 #' @export
 #' @examples
 #' \dontrun{
@@ -39,6 +41,8 @@ all_matches <- function(tz = "America/New_York") {
     away_team_id = purrr::map_int(matches, \(m) as.integer(m$awayTeam$id %||% NA_integer_)),
     away_team    = purrr::map_chr(matches, \(m) m$awayTeam$name %||% NA_character_),
     status       = purrr::map_chr(matches, \(m) m$status %||% NA_character_),
+    minute       = purrr::map_int(matches, \(m) as.integer(m$minute %||% NA_integer_)),
+    injury_time  = purrr::map_int(matches, \(m) as.integer(m$injuryTime %||% NA_integer_)),
     home_score   = purrr::map_int(matches, \(m) as.integer(m$score$fullTime$home %||% NA_integer_)),
     away_score   = purrr::map_int(matches, \(m) as.integer(m$score$fullTime$away %||% NA_integer_)),
     home_pk      = purrr::map_int(matches, \(m) as.integer(m$score$penalties$home %||% NA_integer_)),
@@ -52,7 +56,9 @@ all_matches <- function(tz = "America/New_York") {
     away     = out$away_score,
     pk_home  = out$home_pk,
     pk_away  = out$away_pk,
-    utc_date = out$utc_date
+    utc_date = out$utc_date,
+    minute   = out$minute,
+    injury   = out$injury_time
   )
 
   out <- add_local_cols(out, tz)
@@ -264,6 +270,8 @@ empty_matches <- function() {
     away_team_id  = integer(),
     away_team     = character(),
     status        = character(),
+    minute        = integer(),
+    injury_time   = integer(),
     home_score    = integer(),
     away_score    = integer(),
     home_pk       = integer(),
