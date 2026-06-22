@@ -54,12 +54,12 @@
   {
     "position": 5,
     "group_letter": "G",
-    "team": "New Zealand",
-    "team_id": 783,
-    "played": 1,
-    "points": 1,
+    "team": "Belgium",
+    "team_id": 805,
+    "played": 2,
+    "points": 2,
     "gd": 0,
-    "gf": 2,
+    "gf": 1,
     "currently_advancing": true,
     "in_contention": true,
     "provisional": true

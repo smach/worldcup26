@@ -23,10 +23,10 @@
 "F",2,"Japan",766,"JPN",2,1,1,0,6,2,4,4,FALSE,FALSE
 "F",3,"Sweden",792,"SWE",2,1,0,1,6,6,0,3,FALSE,FALSE
 "F",4,"Tunisia",802,"TUN",2,0,0,2,1,9,-8,0,FALSE,FALSE
-"G",1,"Iran",840,"IRN",2,0,2,0,2,2,0,2,FALSE,FALSE
-"G",2,"Belgium",805,"BEL",2,0,2,0,1,1,0,2,FALSE,FALSE
-"G",3,"New Zealand",783,"NZL",1,0,1,0,2,2,0,1,FALSE,FALSE
-"G",4,"Egypt",825,"EGY",1,0,1,0,1,1,0,1,FALSE,FALSE
+"G",1,"Egypt",825,"EGY",2,1,1,0,4,2,2,4,FALSE,FALSE
+"G",2,"Iran",840,"IRN",2,0,2,0,2,2,0,2,FALSE,FALSE
+"G",3,"Belgium",805,"BEL",2,0,2,0,1,1,0,2,FALSE,FALSE
+"G",4,"New Zealand",783,"NZL",2,0,1,1,3,5,-2,1,FALSE,FALSE
 "H",1,"Spain",760,"ESP",2,1,1,0,4,0,4,4,FALSE,FALSE
 "H",2,"Uruguay",758,"URU",2,0,2,0,3,3,0,2,FALSE,FALSE
 "H",3,"Cape Verde Islands",1930,"CPV",2,0,2,0,2,2,0,2,FALSE,FALSE
