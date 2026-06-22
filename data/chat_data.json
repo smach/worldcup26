@@ -1038,7 +1038,7 @@
     "home_tla": "FRA",
     "away_team": "Iraq",
     "away_tla": "IRQ",
-    "status": "IN_PLAY",
+    "status": "PAUSED",
     "score_display": "1–0 (live 45')",
     "home_score": 1,
     "away_score": 0,
