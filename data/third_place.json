@@ -27,6 +27,19 @@
   },
   {
     "position": 3,
+    "group_letter": "L",
+    "team": "Croatia",
+    "team_id": 799,
+    "played": 2,
+    "points": 3,
+    "gd": -1,
+    "gf": 3,
+    "currently_advancing": true,
+    "in_contention": false,
+    "provisional": true
+  },
+  {
+    "position": 4,
     "group_letter": "D",
     "team": "Paraguay",
     "team_id": 761,
@@ -39,7 +52,7 @@
     "provisional": true
   },
   {
-    "position": 4,
+    "position": 5,
     "group_letter": "J",
     "team": "Algeria",
     "team_id": 778,
@@ -48,11 +61,11 @@
     "gd": -2,
     "gf": 2,
     "currently_advancing": true,
-    "in_contention": false,
+    "in_contention": true,
     "provisional": true
   },
   {
-    "position": 5,
+    "position": 6,
     "group_letter": "H",
     "team": "Cape Verde Islands",
     "team_id": 1930,
@@ -65,7 +78,7 @@
     "provisional": true
   },
   {
-    "position": 6,
+    "position": 7,
     "group_letter": "G",
     "team": "Belgium",
     "team_id": 805,
@@ -78,7 +91,7 @@
     "provisional": true
   },
   {
-    "position": 7,
+    "position": 8,
     "group_letter": "K",
     "team": "Congo DR",
     "team_id": 1934,
@@ -91,7 +104,7 @@
     "provisional": true
   },
   {
-    "position": 8,
+    "position": 9,
     "group_letter": "A",
     "team": "Czechia",
     "team_id": 798,
@@ -99,12 +112,12 @@
     "points": 1,
     "gd": -1,
     "gf": 2,
-    "currently_advancing": true,
+    "currently_advancing": false,
     "in_contention": true,
     "provisional": true
   },
   {
-    "position": 9,
+    "position": 10,
     "group_letter": "E",
     "team": "Ecuador",
     "team_id": 791,
@@ -117,7 +130,7 @@
     "provisional": true
   },
   {
-    "position": 10,
+    "position": 11,
     "group_letter": "B",
     "team": "Bosnia-Herzegovina",
     "team_id": 1060,
@@ -125,19 +138,6 @@
     "points": 1,
     "gd": -3,
     "gf": 2,
-    "currently_advancing": false,
-    "in_contention": true,
-    "provisional": true
-  },
-  {
-    "position": 11,
-    "group_letter": "L",
-    "team": "Panama",
-    "team_id": 1836,
-    "played": 1,
-    "points": 0,
-    "gd": -1,
-    "gf": 0,
     "currently_advancing": false,
     "in_contention": true,
     "provisional": true

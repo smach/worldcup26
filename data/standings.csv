@@ -45,5 +45,5 @@
 "K",4,"Uzbekistan",8070,"UZB",2,0,0,2,1,8,-7,0,FALSE,FALSE
 "L",1,"England",770,"ENG",2,1,1,0,4,2,2,4,FALSE,FALSE
 "L",2,"Ghana",763,"GHA",2,1,1,0,1,0,1,4,FALSE,FALSE
-"L",3,"Panama",1836,"PAN",1,0,0,1,0,1,-1,0,FALSE,FALSE
-"L",4,"Croatia",799,"CRO",1,0,0,1,2,4,-2,0,FALSE,FALSE
+"L",3,"Croatia",799,"CRO",2,1,0,1,3,4,-1,3,FALSE,FALSE
+"L",4,"Panama",1836,"PAN",2,0,0,2,0,2,-2,0,FALSE,FALSE
