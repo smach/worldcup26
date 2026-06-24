@@ -3,10 +3,10 @@
 "A",2,"South Korea",772,"KOR",2,1,0,1,2,2,0,3,FALSE,FALSE
 "A",3,"Czechia",798,"CZE",2,0,1,1,2,3,-1,1,FALSE,FALSE
 "A",4,"South Africa",774,"RSA",2,0,1,1,1,3,-2,1,FALSE,FALSE
-"B",1,"Canada",828,"CAN",2,1,1,0,7,1,6,4,FALSE,FALSE
-"B",2,"Switzerland",788,"SUI",2,1,1,0,5,2,3,4,FALSE,FALSE
-"B",3,"Bosnia-Herzegovina",1060,"BIH",2,0,1,1,2,5,-3,1,FALSE,FALSE
-"B",4,"Qatar",8030,"QAT",2,0,1,1,1,7,-6,1,FALSE,FALSE
+"B",1,"Switzerland",788,"SUI",3,2,1,0,7,3,4,7,FALSE,TRUE
+"B",2,"Canada",828,"CAN",3,1,1,1,8,3,5,4,FALSE,TRUE
+"B",3,"Bosnia-Herzegovina",1060,"BIH",3,1,1,1,5,6,-1,4,FALSE,TRUE
+"B",4,"Qatar",8030,"QAT",3,0,1,2,2,10,-8,1,FALSE,TRUE
 "C",1,"Brazil",764,"BRA",2,1,1,0,4,1,3,4,FALSE,FALSE
 "C",2,"Morocco",815,"MAR",2,1,1,0,2,1,1,4,FALSE,FALSE
 "C",3,"Scotland",8873,"SCO",2,1,0,1,1,1,0,3,FALSE,FALSE

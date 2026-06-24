@@ -1,13 +1,13 @@
 "position","group_letter","team","team_id","played","points","gd","gf","currently_advancing","in_contention","provisional"
-1,"F","Sweden",792,2,3,0,6,TRUE,FALSE,TRUE
-2,"C","Scotland",8873,2,3,0,1,TRUE,FALSE,TRUE
-3,"L","Croatia",799,2,3,-1,3,TRUE,FALSE,TRUE
-4,"D","Paraguay",761,2,3,-2,2,TRUE,FALSE,TRUE
-5,"J","Algeria",778,2,3,-2,2,TRUE,TRUE,TRUE
-6,"H","Cape Verde Islands",1930,2,2,0,2,TRUE,TRUE,TRUE
-7,"G","Belgium",805,2,2,0,1,TRUE,TRUE,TRUE
-8,"A","Czechia",798,2,1,-1,2,TRUE,TRUE,TRUE
-9,"K","Congo DR",1934,2,1,-1,1,FALSE,TRUE,TRUE
-10,"E","Ecuador",791,2,1,-1,0,FALSE,TRUE,TRUE
-11,"B","Bosnia-Herzegovina",1060,2,1,-3,2,FALSE,TRUE,TRUE
+1,"B","Bosnia-Herzegovina",1060,3,4,-1,5,TRUE,FALSE,TRUE
+2,"F","Sweden",792,2,3,0,6,TRUE,FALSE,TRUE
+3,"C","Scotland",8873,2,3,0,1,TRUE,FALSE,TRUE
+4,"L","Croatia",799,2,3,-1,3,TRUE,FALSE,TRUE
+5,"D","Paraguay",761,2,3,-2,2,TRUE,TRUE,TRUE
+6,"J","Algeria",778,2,3,-2,2,TRUE,TRUE,TRUE
+7,"H","Cape Verde Islands",1930,2,2,0,2,TRUE,TRUE,TRUE
+8,"G","Belgium",805,2,2,0,1,TRUE,TRUE,TRUE
+9,"A","Czechia",798,2,1,-1,2,FALSE,TRUE,TRUE
+10,"K","Congo DR",1934,2,1,-1,1,FALSE,TRUE,TRUE
+11,"E","Ecuador",791,2,1,-1,0,FALSE,TRUE,TRUE
 12,"I","Senegal",804,2,0,-3,3,FALSE,FALSE,TRUE
