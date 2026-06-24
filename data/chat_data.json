@@ -1121,7 +1121,7 @@
     "away_pk": null,
     "is_finished": true,
     "is_upcoming": false,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -1146,7 +1146,7 @@
     "away_pk": null,
     "is_finished": true,
     "is_upcoming": false,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -1171,7 +1171,7 @@
     "away_pk": null,
     "is_finished": true,
     "is_upcoming": false,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -1188,15 +1188,15 @@
     "home_tla": "COL",
     "away_team": "Congo DR",
     "away_tla": "COD",
-    "status": "IN_PLAY",
-    "score_display": "0–0 (live 62')",
-    "home_score": 0,
+    "status": "FINISHED",
+    "score_display": "1–0",
+    "home_score": 1,
     "away_score": 0,
     "home_pk": null,
     "away_pk": null,
-    "is_finished": false,
-    "is_upcoming": true,
-    "is_today": true,
+    "is_finished": true,
+    "is_upcoming": false,
+    "is_today": false,
     "venue": null
   },
   {
@@ -1221,7 +1221,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -1246,7 +1246,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -1271,7 +1271,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -1296,7 +1296,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -1321,7 +1321,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -1346,7 +1346,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {

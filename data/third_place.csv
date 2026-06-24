@@ -6,8 +6,8 @@
 5,"J","Algeria",778,2,3,-2,2,TRUE,TRUE,TRUE
 6,"H","Cape Verde Islands",1930,2,2,0,2,TRUE,TRUE,TRUE
 7,"G","Belgium",805,2,2,0,1,TRUE,TRUE,TRUE
-8,"K","Congo DR",1934,1,1,0,1,TRUE,TRUE,TRUE
-9,"A","Czechia",798,2,1,-1,2,FALSE,TRUE,TRUE
+8,"A","Czechia",798,2,1,-1,2,TRUE,TRUE,TRUE
+9,"K","Congo DR",1934,2,1,-1,1,FALSE,TRUE,TRUE
 10,"E","Ecuador",791,2,1,-1,0,FALSE,TRUE,TRUE
 11,"B","Bosnia-Herzegovina",1060,2,1,-3,2,FALSE,TRUE,TRUE
 12,"I","Senegal",804,2,0,-3,3,FALSE,FALSE,TRUE

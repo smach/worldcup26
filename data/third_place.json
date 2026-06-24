@@ -92,19 +92,6 @@
   },
   {
     "position": 8,
-    "group_letter": "K",
-    "team": "Congo DR",
-    "team_id": 1934,
-    "played": 1,
-    "points": 1,
-    "gd": 0,
-    "gf": 1,
-    "currently_advancing": true,
-    "in_contention": true,
-    "provisional": true
-  },
-  {
-    "position": 9,
     "group_letter": "A",
     "team": "Czechia",
     "team_id": 798,
@@ -112,6 +99,19 @@
     "points": 1,
     "gd": -1,
     "gf": 2,
+    "currently_advancing": true,
+    "in_contention": true,
+    "provisional": true
+  },
+  {
+    "position": 9,
+    "group_letter": "K",
+    "team": "Congo DR",
+    "team_id": 1934,
+    "played": 2,
+    "points": 1,
+    "gd": -1,
+    "gf": 1,
     "currently_advancing": false,
     "in_contention": true,
     "provisional": true
