@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-25T20:49:26Z",
+  "generated_utc": "2026-06-25T20:52:30Z",
   "source": "https://www.football-data.org/ (paid tier, live scores)",
   "note": "is_today, is_upcoming and is_finished are computed as of generated_utc (UTC). Recompute from utc_date / match_date if you need them relative to another time.",
   "n_matches": 104,
