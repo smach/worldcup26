@@ -7,10 +7,10 @@
 "B",2,"Canada",828,"CAN",3,1,1,1,8,3,5,4,FALSE,TRUE
 "B",3,"Bosnia-Herzegovina",1060,"BIH",3,1,1,1,5,6,-1,4,FALSE,TRUE
 "B",4,"Qatar",8030,"QAT",3,0,1,2,2,10,-8,1,FALSE,TRUE
-"C",1,"Brazil",764,"BRA",2,1,1,0,4,1,3,4,FALSE,FALSE
-"C",2,"Morocco",815,"MAR",2,1,1,0,2,1,1,4,FALSE,FALSE
-"C",3,"Scotland",8873,"SCO",2,1,0,1,1,1,0,3,FALSE,FALSE
-"C",4,"Haiti",836,"HAI",2,0,0,2,0,4,-4,0,FALSE,FALSE
+"C",1,"Brazil",764,"BRA",3,2,1,0,7,1,6,7,FALSE,TRUE
+"C",2,"Morocco",815,"MAR",3,2,1,0,6,3,3,7,FALSE,TRUE
+"C",3,"Scotland",8873,"SCO",3,1,0,2,1,4,-3,3,FALSE,TRUE
+"C",4,"Haiti",836,"HAI",3,0,0,3,2,8,-6,0,FALSE,TRUE
 "D",1,"United States",771,"USA",2,2,0,0,6,1,5,6,FALSE,FALSE
 "D",2,"Australia",779,"AUS",2,1,0,1,2,2,0,3,FALSE,FALSE
 "D",3,"Paraguay",761,"PAR",2,1,0,1,2,4,-2,3,FALSE,FALSE
