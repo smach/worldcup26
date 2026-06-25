@@ -40,6 +40,19 @@
   },
   {
     "position": 4,
+    "group_letter": "A",
+    "team": "South Korea",
+    "team_id": 772,
+    "played": 3,
+    "points": 3,
+    "gd": -1,
+    "gf": 2,
+    "currently_advancing": true,
+    "in_contention": false,
+    "provisional": true
+  },
+  {
+    "position": 5,
     "group_letter": "D",
     "team": "Paraguay",
     "team_id": 761,
@@ -48,11 +61,11 @@
     "gd": -2,
     "gf": 2,
     "currently_advancing": true,
-    "in_contention": false,
+    "in_contention": true,
     "provisional": true
   },
   {
-    "position": 5,
+    "position": 6,
     "group_letter": "J",
     "team": "Algeria",
     "team_id": 778,
@@ -65,7 +78,7 @@
     "provisional": true
   },
   {
-    "position": 6,
+    "position": 7,
     "group_letter": "C",
     "team": "Scotland",
     "team_id": 8873,
@@ -78,7 +91,7 @@
     "provisional": true
   },
   {
-    "position": 7,
+    "position": 8,
     "group_letter": "H",
     "team": "Cape Verde Islands",
     "team_id": 1930,
@@ -91,7 +104,7 @@
     "provisional": true
   },
   {
-    "position": 8,
+    "position": 9,
     "group_letter": "G",
     "team": "Belgium",
     "team_id": 805,
@@ -99,19 +112,6 @@
     "points": 2,
     "gd": 0,
     "gf": 1,
-    "currently_advancing": true,
-    "in_contention": true,
-    "provisional": true
-  },
-  {
-    "position": 9,
-    "group_letter": "A",
-    "team": "Czechia",
-    "team_id": 798,
-    "played": 2,
-    "points": 1,
-    "gd": -1,
-    "gf": 2,
     "currently_advancing": false,
     "in_contention": true,
     "provisional": true
