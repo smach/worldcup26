@@ -1,6 +1,19 @@
 [
   {
     "position": 1,
+    "group_letter": "F",
+    "team": "Sweden",
+    "team_id": 792,
+    "played": 3,
+    "points": 4,
+    "gd": 0,
+    "gf": 7,
+    "currently_advancing": true,
+    "in_contention": false,
+    "provisional": true
+  },
+  {
+    "position": 2,
     "group_letter": "E",
     "team": "Ecuador",
     "team_id": 791,
@@ -13,7 +26,7 @@
     "provisional": true
   },
   {
-    "position": 2,
+    "position": 3,
     "group_letter": "B",
     "team": "Bosnia-Herzegovina",
     "team_id": 1060,
@@ -21,19 +34,6 @@
     "points": 4,
     "gd": -1,
     "gf": 5,
-    "currently_advancing": true,
-    "in_contention": false,
-    "provisional": true
-  },
-  {
-    "position": 3,
-    "group_letter": "F",
-    "team": "Sweden",
-    "team_id": 792,
-    "played": 2,
-    "points": 3,
-    "gd": 0,
-    "gf": 6,
     "currently_advancing": true,
     "in_contention": false,
     "provisional": true

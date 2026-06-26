@@ -19,10 +19,10 @@
 "E",2,"Ivory Coast",1935,"CIV",3,2,0,1,4,2,2,6,FALSE,TRUE
 "E",3,"Ecuador",791,"ECU",3,1,1,1,2,2,0,4,FALSE,TRUE
 "E",4,"Curaçao",9460,"CUW",3,0,1,2,1,9,-8,1,FALSE,TRUE
-"F",1,"Netherlands",8601,"NED",2,1,1,0,7,3,4,4,FALSE,FALSE
-"F",2,"Japan",766,"JPN",2,1,1,0,6,2,4,4,FALSE,FALSE
-"F",3,"Sweden",792,"SWE",2,1,0,1,6,6,0,3,FALSE,FALSE
-"F",4,"Tunisia",802,"TUN",2,0,0,2,1,9,-8,0,FALSE,FALSE
+"F",1,"Netherlands",8601,"NED",3,2,1,0,10,4,6,7,FALSE,TRUE
+"F",2,"Japan",766,"JPN",3,1,2,0,7,3,4,5,FALSE,TRUE
+"F",3,"Sweden",792,"SWE",3,1,1,1,7,7,0,4,FALSE,TRUE
+"F",4,"Tunisia",802,"TUN",3,0,0,3,2,12,-10,0,FALSE,TRUE
 "G",1,"Egypt",825,"EGY",2,1,1,0,4,2,2,4,FALSE,FALSE
 "G",2,"Iran",840,"IRN",2,0,2,0,2,2,0,2,FALSE,FALSE
 "G",3,"Belgium",805,"BEL",2,0,2,0,1,1,0,2,FALSE,FALSE
