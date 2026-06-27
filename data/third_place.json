@@ -66,6 +66,19 @@
   },
   {
     "position": 6,
+    "group_letter": "G",
+    "team": "Iran",
+    "team_id": 840,
+    "played": 3,
+    "points": 3,
+    "gd": 0,
+    "gf": 3,
+    "currently_advancing": true,
+    "in_contention": true,
+    "provisional": true
+  },
+  {
+    "position": 7,
     "group_letter": "L",
     "team": "Croatia",
     "team_id": 799,
@@ -78,7 +91,7 @@
     "provisional": true
   },
   {
-    "position": 7,
+    "position": 8,
     "group_letter": "A",
     "team": "South Korea",
     "team_id": 772,
@@ -91,7 +104,7 @@
     "provisional": true
   },
   {
-    "position": 8,
+    "position": 9,
     "group_letter": "J",
     "team": "Algeria",
     "team_id": 778,
@@ -99,31 +112,18 @@
     "points": 3,
     "gd": -2,
     "gf": 2,
-    "currently_advancing": true,
-    "in_contention": true,
-    "provisional": true
-  },
-  {
-    "position": 9,
-    "group_letter": "C",
-    "team": "Scotland",
-    "team_id": 8873,
-    "played": 3,
-    "points": 3,
-    "gd": -3,
-    "gf": 1,
     "currently_advancing": false,
     "in_contention": true,
     "provisional": true
   },
   {
     "position": 10,
-    "group_letter": "G",
-    "team": "Belgium",
-    "team_id": 805,
-    "played": 2,
-    "points": 2,
-    "gd": 0,
+    "group_letter": "C",
+    "team": "Scotland",
+    "team_id": 8873,
+    "played": 3,
+    "points": 3,
+    "gd": -3,
     "gf": 1,
     "currently_advancing": false,
     "in_contention": true,

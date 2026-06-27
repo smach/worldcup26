@@ -4,10 +4,10 @@
 3,"B","Bosnia-Herzegovina",1060,3,4,-1,5,TRUE,FALSE,TRUE
 4,"D","Paraguay",761,3,4,-2,2,TRUE,FALSE,TRUE
 5,"I","Senegal",804,3,3,2,8,TRUE,TRUE,TRUE
-6,"L","Croatia",799,2,3,-1,3,TRUE,TRUE,TRUE
-7,"A","South Korea",772,3,3,-1,2,TRUE,TRUE,TRUE
-8,"J","Algeria",778,2,3,-2,2,TRUE,TRUE,TRUE
-9,"C","Scotland",8873,3,3,-3,1,FALSE,TRUE,TRUE
-10,"G","Belgium",805,2,2,0,1,FALSE,TRUE,TRUE
+6,"G","Iran",840,3,3,0,3,TRUE,TRUE,TRUE
+7,"L","Croatia",799,2,3,-1,3,TRUE,TRUE,TRUE
+8,"A","South Korea",772,3,3,-1,2,TRUE,TRUE,TRUE
+9,"J","Algeria",778,2,3,-2,2,FALSE,TRUE,TRUE
+10,"C","Scotland",8873,3,3,-3,1,FALSE,TRUE,TRUE
 11,"H","Uruguay",758,3,2,-1,3,FALSE,TRUE,TRUE
 12,"K","Congo DR",1934,2,1,-1,1,FALSE,FALSE,TRUE
