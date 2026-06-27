@@ -118,19 +118,6 @@
   },
   {
     "position": 10,
-    "group_letter": "H",
-    "team": "Cape Verde Islands",
-    "team_id": 1930,
-    "played": 2,
-    "points": 2,
-    "gd": 0,
-    "gf": 2,
-    "currently_advancing": false,
-    "in_contention": true,
-    "provisional": true
-  },
-  {
-    "position": 11,
     "group_letter": "G",
     "team": "Belgium",
     "team_id": 805,
@@ -138,6 +125,19 @@
     "points": 2,
     "gd": 0,
     "gf": 1,
+    "currently_advancing": false,
+    "in_contention": true,
+    "provisional": true
+  },
+  {
+    "position": 11,
+    "group_letter": "H",
+    "team": "Uruguay",
+    "team_id": 758,
+    "played": 3,
+    "points": 2,
+    "gd": -1,
+    "gf": 3,
     "currently_advancing": false,
     "in_contention": true,
     "provisional": true
