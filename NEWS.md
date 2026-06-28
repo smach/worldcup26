@@ -1,3 +1,15 @@
+# worldcup26 0.7.1
+
+* The Knockout stage tab now carries a short note explaining that fixture dates
+  and times are official but next-round matchups can lag the results — the
+  football-data.org API doesn't place a team into a knockout slot until that
+  slot is officially set, so an upcoming game may read "TBD" even after the
+  feeding match is decided. The note links to the official FIFA fixtures page
+  for the latest confirmed matchups. Front-end copy only — no R or
+  `live-scores.js` changes.
+
+  _[This update was written by Claude]_
+
 # worldcup26 0.7.0
 
 * The companion Quarto site gains a **Knockout stage** tab (before Standings)

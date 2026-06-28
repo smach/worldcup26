@@ -294,7 +294,13 @@ ko = knockoutRounds(matches)
 ko.rounds.every(r => r.matches.length === 0)
   ? html`<p class="muted">The knockout bracket fills in here once the group
       stage finishes — check back after the final group matches.</p>`
-  : bracketColumns(ko)
+  : html`<p class="ko-note muted">Dates and kick-off times are official, but
+      next-round matchups can lag the results, so an upcoming game may read “TBD”
+      here even after the feeding match is decided. For the latest confirmed
+      fixtures, see the
+      <a href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/scores-fixtures"
+         target="_blank" rel="noopener">official FIFA fixtures page</a>.</p>
+      ${bracketColumns(ko)}`
 ```
 
 ## Standings
