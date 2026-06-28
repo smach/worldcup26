@@ -2,6 +2,7 @@
 body { font-feature-settings: "tnum" 1, "lnum" 1; }
 
 .muted { color: var(--bs-secondary, #6b7280); }
+.ko-note { margin: 0 0 1rem; font-size: 0.9rem; }
 
 /* ---- Team header ----------------------------------------------------- */
 .team-header {

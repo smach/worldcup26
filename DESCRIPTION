@@ -1,6 +1,6 @@
 Package: worldcup26
 Title: Access FIFA 2026 World Cup Schedule and Results
-Version: 0.7.0
+Version: 0.7.1
 Authors@R:
     person("Sharon", "Machlis", , "smachlis@gmail.com", role = c("aut", "cre"))
 Description: An R wrapper for the football-data.org v4 API that retrieves
