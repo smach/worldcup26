@@ -81,7 +81,7 @@ is available.
 
 ```{ojs}
 //| echo: false
-import {computeScoreDisplay, mergeLiveScores} from "./live-scores.js"
+import {computeScoreDisplay, mergeLiveScores, knockoutRounds} from "./live-scores.js"
 
 teams   = transpose(teams_data).sort((a, b) => a.name.localeCompare(b.name))
 
@@ -282,6 +282,21 @@ html`${dayList.map(([day, dayMatches]) => html`
 `)}`
 ```
 
+## Knockout stage
+
+```{ojs}
+//| echo: false
+// The bracket, derived from the same live-merged `matches` array, so the
+// "Update scores" button refreshes these scorelines too. The API gives no
+// match-to-slot linkage, so rounds are shown as ordered columns (R32 → Final)
+// rather than a connector tree; undecided slots read "TBD".
+ko = knockoutRounds(matches)
+ko.rounds.every(r => r.matches.length === 0)
+  ? html`<p class="muted">The knockout bracket fills in here once the group
+      stage finishes — check back after the final group matches.</p>`
+  : bracketColumns(ko)
+```
+
 ## Standings
 
 ```{ojs}
@@ -463,6 +478,68 @@ function matchListTable(rows) {
     </tr>`)}
     </tbody>
   </table>`;
+}
+
+// ---- Knockout bracket -------------------------------------------------------
+
+// Which side has advanced, for a finished knockout match: "home", "away", or
+// null (not finished, or level with no shoot-out data). Penalties break a draw.
+function koWinnerSide(m) {
+  if (!finishedStatuses.has(m.status)) return null;
+  if (m.home_score != null && m.away_score != null && m.home_score !== m.away_score) {
+    return m.home_score > m.away_score ? "home" : "away";
+  }
+  if (m.home_pk != null && m.away_pk != null && m.home_pk !== m.away_pk) {
+    return m.home_pk > m.away_pk ? "home" : "away";
+  }
+  return null;
+}
+
+// One knockout match: date/time (in the selected tz), both teams (TBD when a
+// slot isn't decided yet), the scoreline, and any status badge. The advancing
+// side is bolded once the match is final.
+function koCard(m) {
+  const winner = koWinnerSide(m);
+  const sideClass = side => winner === side ? "ko-team winner" : "ko-team";
+  return html`<div class="ko-card">
+    <div class="ko-date">${formatDateShort(m.utc_date)} · ${formatTime(m.utc_date)}</div>
+    <div class="${sideClass("home")}">${crestFor(m.home_team, m.home_team_id)}</div>
+    <div class="${sideClass("away")}">${crestFor(m.away_team, m.away_team_id)}</div>
+    <div class="ko-score">${m.score_display || ""} ${statusBadge(m)}</div>
+  </div>`;
+}
+
+// One bracket column: a round heading and its match cards (a placeholder when
+// the round has no fixtures yet).
+function bracketRound(round, headingTag = "h3") {
+  const heading = headingTag === "h4"
+    ? html`<h4 class="round-subheading">${round.label}</h4>`
+    : html`<h3 class="round-heading">${round.label}</h3>`;
+  return html`<div class="bracket-round">
+    ${heading}
+    ${round.matches.length > 0
+      ? round.matches.map(koCard)
+      : html`<div class="ko-card empty"><span class="tbd">To be determined</span></div>`}
+  </div>`;
+}
+
+// The full bracket: the five main rounds as left→right columns, with the
+// third-place playoff tucked beneath the Final.
+function bracketColumns(ko) {
+  return html`<div class="bracket-grid">
+    ${ko.rounds.map(r => {
+      if (r.stage === "FINAL" && ko.thirdPlace) {
+        return html`<div class="bracket-round final-col">
+          <h3 class="round-heading">${r.label}</h3>
+          ${r.matches.length > 0
+            ? r.matches.map(koCard)
+            : html`<div class="ko-card empty"><span class="tbd">To be determined</span></div>`}
+          ${bracketRound(ko.thirdPlace, "h4")}
+        </div>`;
+      }
+      return bracketRound(r);
+    })}
+  </div>`;
 }
 
 // Goal difference with an explicit + for positive values.

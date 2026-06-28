@@ -73,6 +73,61 @@ table.day-table td.team.away { text-align: left; }
 table.day-table td.stage { color: #6b7280; font-size: 0.85rem; }
 table.day-table td.score { font-variant-numeric: tabular-nums; }
 
+/* ---- Knockout bracket ------------------------------------------------- */
+/* Rounds laid out left -> right like a bracket (no connector lines, since the
+   API gives no match-to-slot linkage). Scrolls horizontally when the five
+   columns don't fit; the columns wrap on narrow screens. */
+.bracket-grid {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin: 1rem 0 1.5rem;
+}
+.bracket-round {
+  flex: 1 0 13rem;
+  min-width: 13rem;
+}
+.round-heading {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+.round-subheading {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin: 1.25rem 0 0.5rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.ko-card {
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid var(--bs-primary, #1a3b6c);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  background: #ffffff;
+  margin: 0 0 0.75rem;
+}
+.ko-card.empty { border-left-color: #d1d5db; }
+.ko-date { font-size: 0.8rem; color: #6b7280; margin-bottom: 0.35rem; }
+.ko-team { font-size: 1rem; line-height: 1.5; }
+.ko-team.winner { font-weight: 700; }
+.ko-score {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+  color: #374151;
+  margin-top: 0.35rem;
+}
+
+@media (max-width: 720px) {
+  .bracket-grid { flex-wrap: wrap; overflow-x: visible; }
+  .bracket-round { flex-basis: 100%; }
+}
+
 /* ---- Status badges --------------------------------------------------- */
 .badge {
   display: inline-block;

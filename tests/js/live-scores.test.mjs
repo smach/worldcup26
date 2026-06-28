@@ -6,7 +6,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { computeScoreDisplay, mergeLiveScores } from "../../live-scores.js";
+import { computeScoreDisplay, mergeLiveScores, knockoutRounds } from "../../live-scores.js";
 
 const FUTURE = "2026-07-01T00:00:00Z";
 const PAST = "2026-06-12T00:00:00Z";
@@ -149,4 +149,76 @@ test("returns a new array and does not mutate inputs", () => {
     base.map((m) => ({ ...m, utc_date: m.utc_date.toISOString() })),
     snapshot
   );
+});
+
+// ---- knockoutRounds --------------------------------------------------------
+
+// One match per knockout stage plus a couple of group rows, deliberately out of
+// kickoff order within the round so the sort is exercised.
+const koMatches = [
+  { match_id: 10, stage: "GROUP_STAGE", group: "GROUP_A", utc_date: new Date("2026-06-12T18:00:00Z") },
+  { match_id: 11, stage: "GROUP_STAGE", group: "GROUP_B", utc_date: new Date("2026-06-13T18:00:00Z") },
+  { match_id: 20, stage: "LAST_32", home_team: "Brazil", away_team: "Korea", utc_date: new Date("2026-06-28T23:00:00Z") },
+  { match_id: 21, stage: "LAST_32", home_team: "France", away_team: "Senegal", utc_date: new Date("2026-06-28T19:00:00Z") },
+  { match_id: 30, stage: "LAST_16", home_team: null, away_team: null, utc_date: new Date("2026-07-04T19:00:00Z") },
+  { match_id: 40, stage: "QUARTER_FINALS", home_team: null, away_team: null, utc_date: new Date("2026-07-10T19:00:00Z") },
+  { match_id: 50, stage: "SEMI_FINALS", home_team: null, away_team: null, utc_date: new Date("2026-07-14T19:00:00Z") },
+  { match_id: 60, stage: "THIRD_PLACE", home_team: null, away_team: null, utc_date: new Date("2026-07-18T19:00:00Z") },
+  { match_id: 70, stage: "FINAL", home_team: null, away_team: null, utc_date: new Date("2026-07-19T19:00:00Z") },
+];
+
+test("knockoutRounds returns the five main rounds in bracket order", () => {
+  const { rounds } = knockoutRounds(koMatches);
+  assert.deepEqual(
+    rounds.map((r) => r.stage),
+    ["LAST_32", "LAST_16", "QUARTER_FINALS", "SEMI_FINALS", "FINAL"]
+  );
+  assert.deepEqual(
+    rounds.map((r) => r.label),
+    ["Round of 32", "Round of 16", "Quarter-finals", "Semi-finals", "Final"]
+  );
+});
+
+test("knockoutRounds excludes group-stage and keeps null-team (TBD) rows", () => {
+  const { rounds } = knockoutRounds(koMatches);
+  const ids = rounds.flatMap((r) => r.matches.map((m) => m.match_id));
+  assert.ok(!ids.includes(10) && !ids.includes(11)); // group rows dropped
+  const r16 = rounds.find((r) => r.stage === "LAST_16");
+  assert.equal(r16.matches.length, 1);
+  assert.equal(r16.matches[0].home_team, null); // TBD row preserved
+});
+
+test("knockoutRounds sorts matches within a round by kickoff", () => {
+  const { rounds } = knockoutRounds(koMatches);
+  const r32 = rounds.find((r) => r.stage === "LAST_32");
+  assert.deepEqual(r32.matches.map((m) => m.match_id), [21, 20]); // 19:00 before 23:00
+});
+
+test("knockoutRounds separates the third-place playoff", () => {
+  const { rounds, thirdPlace } = knockoutRounds(koMatches);
+  assert.ok(rounds.every((r) => r.stage !== "THIRD_PLACE"));
+  assert.equal(thirdPlace.stage, "THIRD_PLACE");
+  assert.equal(thirdPlace.label, "Third-place playoff");
+  assert.equal(thirdPlace.matches.length, 1);
+});
+
+test("knockoutRounds also sorts on the raw utc_date_str field", () => {
+  const raw = [
+    { match_id: 2, stage: "LAST_32", utc_date_str: "2026-06-28T23:00:00Z" },
+    { match_id: 1, stage: "LAST_32", utc_date_str: "2026-06-28T19:00:00Z" },
+  ];
+  const { rounds } = knockoutRounds(raw);
+  const r32 = rounds.find((r) => r.stage === "LAST_32");
+  assert.deepEqual(r32.matches.map((m) => m.match_id), [1, 2]);
+});
+
+test("knockoutRounds on empty/groups-only input yields empty rounds and no third place", () => {
+  const empty = knockoutRounds([]);
+  assert.equal(empty.rounds.length, 5);
+  assert.ok(empty.rounds.every((r) => r.matches.length === 0));
+  assert.equal(empty.thirdPlace, null);
+
+  const groupsOnly = knockoutRounds(koMatches.filter((m) => m.stage === "GROUP_STAGE"));
+  assert.ok(groupsOnly.rounds.every((r) => r.matches.length === 0));
+  assert.equal(groupsOnly.thirdPlace, null);
 });

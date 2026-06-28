@@ -261,14 +261,25 @@ worldcup26_chat(model = "claude-opus-4-7")
 ## Companion Quarto site
 
 This repo also ships a small Quarto + Observable JS site that lets
-visitors browse the schedule by team or by date, and view group
-**standings** (with the third-place race). It builds on top of the
-package — an R chunk in `index.qmd` calls `list_teams()`, `all_matches()`,
-`group_standings()`, and `third_place_table()` at render time and hands the
-data to Observable JS via `ojs_define()`. The rendered page is fully static
-and needs no API key to view. The standings reflect the last rebuild; the
-optional "Update scores" button refreshes live match scores but does not
-recompute the standings tables.
+visitors browse the schedule by team or by date, view the **knockout
+stage** bracket, and view group **standings** (with the third-place race).
+It builds on top of the package — an R chunk in `index.qmd` calls
+`list_teams()`, `all_matches()`, `group_standings()`, and
+`third_place_table()` at render time and hands the data to Observable JS via
+`ojs_define()`. The rendered page is fully static and needs no API key to
+view. The standings reflect the last rebuild; the optional "Update scores"
+button refreshes live match scores but does not recompute the standings
+tables.
+
+The **Knockout stage** tab lays the rounds out as columns (Round of 32 →
+Round of 16 → Quarter-finals → Semi-finals → Final, with the third-place
+playoff beside the Final). The football-data.org API supplies each knockout
+fixture's stage, date, status, and score but no bracket linkage, so the
+rounds are shown as ordered columns rather than a connector tree; a slot
+whose teams aren't decided yet reads "TBD". The knockout cards derive from
+the same match array as the rest of the page, so the "Update scores" button
+refreshes their live scorelines too. The round-grouping logic lives in
+`knockoutRounds()` in `live-scores.js` (tested in `tests/js/`).
 
 Site files (all excluded from the package build via `.Rbuildignore`):
 

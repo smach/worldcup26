@@ -125,3 +125,64 @@ export function mergeLiveScores(baseMatches, liveEntries, now = new Date()) {
     };
   });
 }
+
+// The knockout bracket, in order, for the "Knockout stage" tab.
+//
+// The football-data.org API returns each knockout fixture with its `stage`
+// (LAST_32 … FINAL) but no bracket linkage and a null team for any slot not yet
+// decided — so we present the rounds as ordered columns, not a connector tree.
+// THIRD_PLACE is returned on its own so the page can place it beside the final.
+const KO_ROUND_ORDER = ["LAST_32", "LAST_16", "QUARTER_FINALS", "SEMI_FINALS", "FINAL"];
+const KO_ROUND_LABELS = {
+  LAST_32: "Round of 32",
+  LAST_16: "Round of 16",
+  QUARTER_FINALS: "Quarter-finals",
+  SEMI_FINALS: "Semi-finals",
+  FINAL: "Final",
+  THIRD_PLACE: "Third-place playoff",
+};
+
+// Sort knockout matches within a round by kickoff. Rows carry either a Date in
+// `utc_date` (the page) or an ISO string in `utc_date_str` (raw data); fall back
+// gracefully so the helper works in both, and on either field being absent.
+function koKickoffMs(m) {
+  const d = toDate(m.utc_date ?? m.utc_date_str);
+  return d === null ? Infinity : d.getTime();
+}
+
+// Group the match array into the ordered knockout rounds.
+//
+//   matches  array of match objects (each with `stage` and a kickoff field)
+//
+// Returns { rounds, thirdPlace } where `rounds` is always the five main rounds
+// in bracket order (each { stage, label, matches }, possibly empty) and
+// `thirdPlace` is that single round object or null. Group-stage and
+// stage-less rows are excluded; null-team rows are kept (they render as TBD).
+export function knockoutRounds(matches) {
+  const src = Array.isArray(matches) ? matches : [];
+  const byStage = new Map();
+  for (const m of src) {
+    if (m == null) continue;
+    const s = m.stage;
+    if (s == null || s === "GROUP_STAGE") continue;
+    if (!byStage.has(s)) byStage.set(s, []);
+    byStage.get(s).push(m);
+  }
+  for (const list of byStage.values()) {
+    list.sort((a, b) => koKickoffMs(a) - koKickoffMs(b));
+  }
+
+  const rounds = KO_ROUND_ORDER.map((stage) => ({
+    stage,
+    label: KO_ROUND_LABELS[stage],
+    matches: byStage.get(stage) ?? [],
+  }));
+
+  const thirdMatches = byStage.get("THIRD_PLACE") ?? [];
+  const thirdPlace =
+    thirdMatches.length > 0
+      ? { stage: "THIRD_PLACE", label: KO_ROUND_LABELS.THIRD_PLACE, matches: thirdMatches }
+      : null;
+
+  return { rounds, thirdPlace };
+}
