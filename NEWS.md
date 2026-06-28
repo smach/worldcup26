@@ -1,3 +1,21 @@
+# worldcup26 0.7.0
+
+* The companion Quarto site gains a **Knockout stage** tab (before Standings)
+  showing the bracket rounds with dates/times, teams, and results. The
+  football-data.org API supplies each knockout fixture's stage, date, status,
+  and score but no match-to-slot linkage and a null team until a slot is
+  decided, so the rounds are laid out as ordered columns (Round of 32 → Round
+  of 16 → Quarter-finals → Semi-finals → Final, with the third-place playoff
+  beside the Final) rather than a connector tree; a slot whose teams aren't
+  decided yet reads "TBD".
+* Front-end only — no R package code changed. The knockout fixtures already
+  flow through `all_matches()`, and the cards derive from the same live-merged
+  match array as the rest of the page, so the optional "Update scores" button
+  refreshes their scorelines with no extra wiring. The round-grouping logic is
+  the tested pure helper `knockoutRounds()` in `live-scores.js`.
+
+  _[This update was written by Claude]_
+
 # worldcup26 0.6.0
 
 * Added group standings and advancement reasoning. Four new functions compute
