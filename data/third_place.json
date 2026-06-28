@@ -10,7 +10,7 @@
     "gf": 4,
     "currently_advancing": true,
     "in_contention": false,
-    "provisional": true
+    "provisional": false
   },
   {
     "position": 2,
@@ -23,7 +23,7 @@
     "gf": 7,
     "currently_advancing": true,
     "in_contention": false,
-    "provisional": true
+    "provisional": false
   },
   {
     "position": 3,
@@ -36,7 +36,7 @@
     "gf": 2,
     "currently_advancing": true,
     "in_contention": false,
-    "provisional": true
+    "provisional": false
   },
   {
     "position": 4,
@@ -49,7 +49,7 @@
     "gf": 2,
     "currently_advancing": true,
     "in_contention": false,
-    "provisional": true
+    "provisional": false
   },
   {
     "position": 5,
@@ -61,11 +61,24 @@
     "gd": -1,
     "gf": 5,
     "currently_advancing": true,
-    "in_contention": true,
-    "provisional": true
+    "in_contention": false,
+    "provisional": false
   },
   {
     "position": 6,
+    "group_letter": "J",
+    "team": "Algeria",
+    "team_id": 778,
+    "played": 3,
+    "points": 4,
+    "gd": -2,
+    "gf": 5,
+    "currently_advancing": true,
+    "in_contention": false,
+    "provisional": false
+  },
+  {
+    "position": 7,
     "group_letter": "D",
     "team": "Paraguay",
     "team_id": 761,
@@ -74,11 +87,11 @@
     "gd": -2,
     "gf": 2,
     "currently_advancing": true,
-    "in_contention": true,
-    "provisional": true
+    "in_contention": false,
+    "provisional": false
   },
   {
-    "position": 7,
+    "position": 8,
     "group_letter": "I",
     "team": "Senegal",
     "team_id": 804,
@@ -87,11 +100,11 @@
     "gd": 2,
     "gf": 8,
     "currently_advancing": true,
-    "in_contention": true,
-    "provisional": true
+    "in_contention": false,
+    "provisional": false
   },
   {
-    "position": 8,
+    "position": 9,
     "group_letter": "G",
     "team": "Iran",
     "team_id": 840,
@@ -99,12 +112,12 @@
     "points": 3,
     "gd": 0,
     "gf": 3,
-    "currently_advancing": true,
-    "in_contention": true,
-    "provisional": true
+    "currently_advancing": false,
+    "in_contention": false,
+    "provisional": false
   },
   {
-    "position": 9,
+    "position": 10,
     "group_letter": "A",
     "team": "South Korea",
     "team_id": 772,
@@ -113,21 +126,8 @@
     "gd": -1,
     "gf": 2,
     "currently_advancing": false,
-    "in_contention": true,
-    "provisional": true
-  },
-  {
-    "position": 10,
-    "group_letter": "J",
-    "team": "Algeria",
-    "team_id": 778,
-    "played": 2,
-    "points": 3,
-    "gd": -2,
-    "gf": 2,
-    "currently_advancing": false,
-    "in_contention": true,
-    "provisional": true
+    "in_contention": false,
+    "provisional": false
   },
   {
     "position": 11,
@@ -139,8 +139,8 @@
     "gd": -3,
     "gf": 1,
     "currently_advancing": false,
-    "in_contention": true,
-    "provisional": true
+    "in_contention": false,
+    "provisional": false
   },
   {
     "position": 12,
@@ -153,6 +153,6 @@
     "gf": 3,
     "currently_advancing": false,
     "in_contention": false,
-    "provisional": true
+    "provisional": false
   }
 ]
