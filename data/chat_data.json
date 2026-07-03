@@ -2071,7 +2071,7 @@
     "away_pk": null,
     "is_finished": true,
     "is_upcoming": false,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -2088,15 +2088,15 @@
     "home_tla": "POR",
     "away_team": "Croatia",
     "away_tla": "CRO",
-    "status": "IN_PLAY",
-    "score_display": "0–1 (live 55')",
-    "home_score": 0,
+    "status": "FINISHED",
+    "score_display": "2–1",
+    "home_score": 2,
     "away_score": 1,
     "home_pk": null,
     "away_pk": null,
-    "is_finished": false,
-    "is_upcoming": true,
-    "is_today": true,
+    "is_finished": true,
+    "is_upcoming": false,
+    "is_today": false,
     "venue": null
   },
   {
@@ -2113,15 +2113,15 @@
     "home_tla": "SUI",
     "away_team": "Algeria",
     "away_tla": "ALG",
-    "status": "TIMED",
-    "score_display": "",
-    "home_score": null,
-    "away_score": null,
+    "status": "IN_PLAY",
+    "score_display": "2–0 (live 47')",
+    "home_score": 2,
+    "away_score": 0,
     "home_pk": null,
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -2146,7 +2146,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -2171,7 +2171,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
@@ -2196,7 +2196,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
