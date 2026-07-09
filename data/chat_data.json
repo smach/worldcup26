@@ -2421,7 +2421,7 @@
     "away_pk": null,
     "is_finished": false,
     "is_upcoming": true,
-    "is_today": false,
+    "is_today": true,
     "venue": null
   },
   {
