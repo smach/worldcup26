@@ -2471,7 +2471,7 @@
     "away_pk": null,
     "is_finished": true,
     "is_upcoming": false,
-    "is_today": true,
+    "is_today": false,
     "venue": null
   },
   {
@@ -2488,15 +2488,15 @@
     "home_tla": "ARG",
     "away_team": "Switzerland",
     "away_tla": "SUI",
-    "status": "IN_PLAY",
-    "score_display": "2–1 (live 117')",
-    "home_score": 2,
+    "status": "FINISHED",
+    "score_display": "3–1",
+    "home_score": 3,
     "away_score": 1,
     "home_pk": null,
     "away_pk": null,
-    "is_finished": false,
-    "is_upcoming": true,
-    "is_today": true,
+    "is_finished": true,
+    "is_upcoming": false,
+    "is_today": false,
     "venue": null
   },
   {
