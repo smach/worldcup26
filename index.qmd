@@ -181,7 +181,7 @@ updateBar = {
 //| echo: false
 viewof selectedTeamName = Inputs.select(
   teams.map(t => t.name),
-  {label: "Team", value: "England"}
+  {label: "Team", value: "Spain"}
 )
 ```
 
