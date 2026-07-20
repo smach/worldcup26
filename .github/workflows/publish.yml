@@ -6,9 +6,9 @@ on:
   schedule:
     # Match window is 15:00-06:00 UTC (hours 15-23 and 0-6); skip the overnight lull.
     # Hourly tick (top of the hour): always runs.
-    - cron: "0 0-6,15-23 * * *"
+    # - cron: "0 0-6,15-23 * * *"
     # Every 10 minutes (excluding :00, covered above): only runs when WORLDCUP26_LIVE is true.
-    - cron: "10,20,30,40,50 0-6,15-23 * * *"
+    # - cron: "10,20,30,40,50 0-6,15-23 * * *"
   workflow_dispatch:
 
 permissions:
